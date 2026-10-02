@@ -210,6 +210,10 @@
     }
 
     /* ── PROJECTS ── */
+    .projects-note {
+      color:var(--muted); font-size:.9rem; font-weight:300;
+      max-width:560px; margin:-1.6rem 0 2.4rem; line-height:1.7;
+    }
     .projects-grid {
       display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
       gap:1.4rem;
@@ -233,6 +237,24 @@
       padding:.18rem .5rem; background:var(--bg);
       border:1px solid var(--border); border-radius:2px;
       color:var(--dim); letter-spacing:.04em;
+    }
+    /* Project image placeholder — looks intentional until a real image is added */
+    .project-img-placeholder {
+      width:100%; aspect-ratio:16/9;
+      display:flex; align-items:center; justify-content:center;
+      border-bottom:1px dashed var(--dim);
+      background:repeating-linear-gradient(45deg, var(--surface), var(--surface) 14px, var(--surface2) 14px, var(--surface2) 28px);
+      font-family:var(--mono); font-size:.68rem; color:var(--dim);
+      letter-spacing:.1em; text-transform:uppercase;
+    }
+    /* A visibly-marked placeholder card: swap title, text, tags and image when ready */
+    .project-card.placeholder { border-style:dashed; border-color:var(--dim); }
+    .project-card.placeholder:hover { border-color:var(--accent); }
+    .project-card .coming-soon {
+      display:inline-block; font-family:var(--mono); font-size:.62rem;
+      color:var(--accent); letter-spacing:.1em; text-transform:uppercase;
+      border:1px solid var(--dim); border-radius:2px;
+      padding:.18rem .5rem; margin-bottom:.7rem;
     }
 
     /* ── RESEARCH ── */
@@ -312,7 +334,7 @@
 
 <section id="hero">
   <div class="hero-text fade-up">
-    <div class="hero-tag">ECE @ Cornell · Class of 2029</div>
+    <div class="hero-tag">ECE @ Cornell · Class of 2028</div>
     <h1>Ishaan<br/><em>Parikh</em></h1>
     <p class="hero-sub">
       I build things that think — from computer vision systems on EV motorcycles to self-driving perception stacks. Somewhere between embedded hardware and quantum ML.
@@ -408,7 +430,30 @@
 <div class="section-wrap" id="projects">
   <div class="section-label">Projects</div>
   <h2>Recent Builds</h2>
+  <p class="projects-note fade-up">A rotating showcase of builds and experiments. New projects land here as they ship — below are a few active ones, plus room for what's next.</p>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ADDING A PROJECT: copy the block below, paste it above the
+       "PLACEHOLDER" comment, then replace the title, description,
+       tags, and image. Drop the image file into the images/ folder
+       and point src at it (e.g. src="images/my_project.jpg").
+       Delete placeholder cards once real ones replace them.
+  ═══════════════════════════════════════════════════════════════
+  <div class="project-card fade-up">
+    <img src="images/my_project.jpg" alt="My Project" />
+    <div class="project-body">
+      <h3>My Project Name</h3>
+      <p>One or two sentences: what it does, how it works, what it achieved.</p>
+      <div class="project-tags">
+        <span>Python</span><span>Embedded</span><span>PCB</span>
+      </div>
+    </div>
+  </div>
+  ════════════════════════════════════════════════════════════════ -->
+
   <div class="projects-grid">
+
+    <!-- Project: Automated Weld Fault Detection -->
     <div class="project-card fade-up">
       <img src="images/weld.jpg" alt="Weld Detection" />
       <div class="project-body">
@@ -420,6 +465,7 @@
       </div>
     </div>
 
+    <!-- Project: Bone Fracture X-ray Analysis -->
     <div class="project-card fade-up">
       <img src="images/xray.jpg" alt="X-ray Analysis" />
       <div class="project-body">
@@ -431,6 +477,7 @@
       </div>
     </div>
 
+    <!-- Project: GNN for Chemistry -->
     <div class="project-card fade-up">
       <img src="images/polymer.jpg" alt="GNN Polymer" />
       <div class="project-body">
@@ -441,6 +488,45 @@
         </div>
       </div>
     </div>
+
+    <!-- PLACEHOLDER cards: replace or delete as real projects are added -->
+    <div class="project-card placeholder fade-up">
+      <div class="project-img-placeholder">image coming soon</div>
+      <div class="project-body">
+        <span class="coming-soon">in progress</span>
+        <h3>Project Title</h3>
+        <p>A short description of this build — what it does, how it works, what it achieved.</p>
+        <div class="project-tags">
+          <span>Tag 1</span><span>Tag 2</span><span>Tag 3</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card placeholder fade-up">
+      <div class="project-img-placeholder">image coming soon</div>
+      <div class="project-body">
+        <span class="coming-soon">in progress</span>
+        <h3>Project Title</h3>
+        <p>A short description of this build — what it does, how it works, what it achieved.</p>
+        <div class="project-tags">
+          <span>Tag 1</span><span>Tag 2</span><span>Tag 3</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card placeholder fade-up">
+      <div class="project-img-placeholder">image coming soon</div>
+      <div class="project-body">
+        <span class="coming-soon">in progress</span>
+        <h3>Project Title</h3>
+        <p>A short description of this build — what it does, how it works, what it achieved.</p>
+        <div class="project-tags">
+          <span>Tag 1</span><span>Tag 2</span><span>Tag 3</span>
+        </div>
+      </div>
+    </div>
+    <!-- END placeholders -->
+
   </div>
 </div>
 
@@ -495,7 +581,7 @@
   <div class="contact-links">
     <a href="mailto:idp7@cornell.edu" class="btn btn-primary">idp7@cornell.edu</a>
     <a href="#" class="btn btn-ghost">LinkedIn</a>
-    <a href="#" class="btn btn-ghost">GitHub</a>
+    <a href="https://github.com/IshaanParikh" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
   </div>
 </div>
 
