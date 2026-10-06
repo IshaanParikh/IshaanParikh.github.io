@@ -314,15 +314,17 @@
         <div class="project-info">
           <div class="part"><span class="ref">U1</span>FPGA · Cornell Electric Vehicles · Sep 2026 – now</div>
           <h3>FPGA CNN Accelerator</h3>
-          <p>An FPGA accelerator for INT8 inference on LFD-RoadSeg, the ResNet-18 lane-segmentation network the CEV car drives on. We're prototyping on MNIST first. My part is the arithmetic: how wide every wire needs to be, and how to do fewer multiplies.</p>
+          <p>An FPGA accelerator for INT8 inference on LFD-RoadSeg, the ResNet-18 lane-segmentation network the CEV car drives on. We're prototyping on MNIST first. My part is the arithmetic: how wide every wire needs to be, and how to do fewer multiplies. That now includes a Winograd convolution unit in RTL that drops in for the direct 3×3 one.</p>
           <ul class="proof">
             <li>Specified INT8 math with wide accumulators and <b>multiply-and-shift</b> rescaling, so there are no dividers in hardware</li>
             <li>Sized the problem: one 3×3 RoadSeg layer is <b>1.1 B multiplies</b> and <b>3.9 MB</b> of memory per frame</li>
-            <li>Wrote an integer-only Winograd F(2×2, 3×3) golden model: <b>16 multiplies</b> per tile instead of 36, checked bit-exact on <b>100,000</b> random tiles plus corner cases</li>
+            <li>Built a Winograd F(2×2, 3×3) convolution unit in SystemVerilog: <b>16 multiplies</b> for a 2×2 output block instead of 36, with every transform done in adders</li>
+            <li>Integer-only by design: weights use 2G, so the hardware computes exactly 4× the direct result and a <b>2-bit shift</b> undoes it</li>
+            <li>Testbench passes <b>100,006 vectors with 0 errors</b> (100,000 random tiles plus corner cases) against a Python reference model</li>
             <li>Sized the MNIST prototype's block RAM at <b>88.5 kB</b> and drafted the FSM that sequences its conv and pool layers</li>
           </ul>
           <div class="chips"><span>Verilog</span><span>SystemVerilog</span><span>Python</span><span>INT8 quantization</span><span>Winograd</span></div>
-          <div class="links"><a href="https://github.com/cornellev/cnn-accelerator" target="_blank" rel="noopener">cornellev/cnn-accelerator ↗</a></div>
+          <div class="links"><a href="https://github.com/cornellev/cnn-accelerator" target="_blank" rel="noopener">cornellev/cnn-accelerator ↗</a><a href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/rtl/winograd_3x3_conv.sv" target="_blank" rel="noopener">winograd_3x3_conv.sv ↗</a></div>
         </div>
         <div class="project-media">
           <figure class="shot">
@@ -332,27 +334,41 @@
         </div>
       </div>
       <details class="code">
-        <summary><span class="file">&lt;/&gt; <b>cev/winograd/winograd_golden.py</b></span></summary>
-        <pre><code class="language-python"># Transform matrices (Lavin &amp; Gray). G2 = 2*G so every entry is an integer.
-BT = np.array([[1, 0, -1, 0], [0, 1, 1, 0], [0, -1, 1, 0], [0, 1, 0, -1]])
-G2 = np.array([[2, 0, 0], [1, 1, 1], [1, -1, 1], [0, 0, 2]])
-AT = np.array([[1, 1, 1, 0], [0, 1, -1, -1]])
+        <summary><span class="file">&lt;/&gt; <b>mnist/rtl/winograd_3x3_conv.sv</b></span></summary>
+        <pre><code class="language-verilog">module winograd_3x3_conv
+(
+    input  logic         [7:0] tile        [0:15],  // 4x4 pixels, row-major
+    input  logic signed [11:0] u_weights   [0:15],  // G' g G'^T, precomputed
+    output logic signed [19:0] convolution [0:3]    // 2x2 outputs, row-major
+);
+    always_comb begin
+        // Input transform, rows: B^T d   (adders only)
+        for (int c = 0; c &lt; 4; c++) begin
+            bt[0*4+c] = d[0*4+c] - d[2*4+c];
+            bt[1*4+c] = d[1*4+c] + d[2*4+c];
+            bt[2*4+c] = d[2*4+c] - d[1*4+c];
+            bt[3*4+c] = d[1*4+c] - d[3*4+c];
+        end
+        // ...columns: (B^T d) B, same pattern
 
-def winograd_conv(d, g, stats=None):
-    """Channel sum happens BEFORE the output transform, so there is
-    one output transform per tile per output channel."""
-    U = weight_transform(g)        # G2 g G2^T, done offline
-    V = input_transform(d)         # B^T d B, adders only
-    M = U * V                      # 16 multiplies per channel (direct: 36)
-    S = M.sum(axis=0)              # accumulate over input channels
-    Y = AT @ S @ AT.T              # adders only
-    return Y
+        // The only 16 multiplies
+        for (int i = 0; i &lt; 16; i++) begin
+            m[i] = u_weights[i] * v[i];
+        end
 
-def check(d, g, stats):
-    y_dir = direct_conv(d, g)
-    y_win = winograd_conv(d, g, stats)
-    if not np.array_equal(y_win, 4 * y_dir):   # bit-exact, integers only
-        raise AssertionError("mismatch")</code></pre>
+        // Output transform, rows: A^T m
+        for (int c = 0; c &lt; 4; c++) begin
+            at[0*4+c] = m[0*4+c] + m[1*4+c] + m[2*4+c];
+            at[1*4+c] = m[1*4+c] - m[2*4+c] - m[3*4+c];
+        end
+        // ...columns: (A^T m) A, same pattern
+
+        // U' used 2G, so y is exactly 4x the direct result
+        for (int i = 0; i &lt; 4; i++) begin
+            convolution[i] = 20'(y[i] &gt;&gt;&gt; 2);
+        end
+    end
+endmodule</code></pre>
       </details>
     </article>
 
