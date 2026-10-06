@@ -15,7 +15,7 @@ Landscape photos (roughly 4:3 or 16:9, about 1200-1600 px wide, JPEG) look best.
 | `rrc_fpga_board.jpg` | Cyclone IV board running the RRC filter |
 | `itch_waveform.jpg` | ITCH decoder waveform screenshot or block diagram |
 | `slam_car.jpg` | The CEV car / LiDAR sensor rig |
-| `tils.jpg` | Screenshot of the Tils compare screen |
+| `tils.jpg` | Tils compare screen (card is hidden for now) |
 | `lowlight_bms.jpg` | Low Light Innovations BMS board render or photo |
 | `quantum_setup.jpg` | Optical bench or alignment GUI screenshot |
 | `cev_can_dashboard.jpg` | CEV CAN dashboard PCB |
