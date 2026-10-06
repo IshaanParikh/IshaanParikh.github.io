@@ -23,7 +23,7 @@ Landscape photos (roughly 4:3 or 16:9, about 1200-1600 px wide, JPEG) look best.
 ## Already filled
 
 `headshot.jpg`, `rrc_constellation.jpg`, `rrc_eye.jpg` (from the rrc-matched-filter
-repo), `slam_vis.jpg`, `slam_desk.jpg`, `igvc_dashboard.jpg` (from cornellev/igvc-dashboard),
+repo), `slam_vis.jpg`, `slam_desk.jpg`,
 `polymer.jpg`, `xray.jpg`, `quantum_focus_curve.png`, `weld.jpg`, `matter.jpg`.
 
 To swap one, overwrite the file with the same name.
