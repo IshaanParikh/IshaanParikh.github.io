@@ -1,13 +1,34 @@
 # Images
 
-This folder holds every image used by the site. Name files in lowercase with underscores, e.g. `fpga_rig.jpg`.
+Every picture on the site is a **slot**. If the file exists, it shows. If it
+doesn't, the page shows a dashed "PHOTO SLOT" box with the filename it wants.
+So adding a photo is just: save it here with the right name, commit, push.
+No HTML edits needed.
 
-## Adding a project to the showcase
+Landscape photos (roughly 4:3 or 16:9, about 1200-1600 px wide, JPEG) look best.
 
-1. Drop your project image into this folder (16:9 works best, e.g. 1280×720).
-2. In `index.html`, find the **Projects** section (search for `id="projects"`).
-3. Copy the template project block from the commented instructions there and paste it just above the `<!-- PLACEHOLDER cards -->` comment.
-4. Replace the title, description, tags, and `src="images/..."` with yours.
-5. When a placeholder card is replaced by a real project, delete one placeholder card so the grid stays tight.
+## Empty slots waiting for photos
 
-Placeholder cards use a dashed `image coming soon` panel — they keep the site presentable until real content is ready.
+| File | What goes there |
+|---|---|
+| `cnn_accelerator.jpg` | FPGA board or simulation waveform for the CNN accelerator |
+| `rrc_fpga_board.jpg` | Cyclone IV board running the RRC filter |
+| `itch_waveform.jpg` | ITCH decoder waveform screenshot or block diagram |
+| `slam_car.jpg` | The CEV car / LiDAR sensor rig |
+| `tils.jpg` | Screenshot of the Tils compare screen |
+| `lowlight_bms.jpg` | Low Light Innovations BMS board render or photo |
+| `quantum_setup.jpg` | Optical bench or alignment GUI screenshot |
+| `cev_can_dashboard.jpg` | CEV CAN dashboard PCB |
+
+## Already filled
+
+`headshot.jpg`, `rrc_constellation.jpg`, `rrc_eye.jpg` (from the rrc-matched-filter
+repo), `slam_vis.jpg`, `slam_desk.jpg`, `igvc_dashboard.jpg` (from cornellev/igvc-dashboard),
+`polymer.jpg`, `xray.jpg`, `quantum_focus_curve.png`, `weld.jpg`, `matter.jpg`.
+
+To swap one, overwrite the file with the same name.
+
+## Adding a new project
+
+In `index.html`, search for `TEMPLATE: copy this block`. Copy the commented
+block, paste it above that comment, and fill it in.

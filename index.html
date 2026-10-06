@@ -1,610 +1,914 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>document.documentElement.classList.add('js');</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ishaan Parikh — ECE @ Cornell</title>
+  <title>Ishaan Parikh</title>
+  <meta name="description" content="Ishaan Parikh, ECE at Cornell. FPGA, DSP, embedded systems, and robotics projects with the code to back them up." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300;1,9..144,600&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #09100f;
-      --surface: #111a18;
-      --surface2: #192420;
-      --border: #1f2e2a;
-      --accent: #3dffa0;
-      --accent-dim: rgba(61,255,160,0.12);
-      --red: #ff6b5b;
-      --text: #dceae6;
-      --muted: #6e9288;
-      --dim: #2d4a44;
-      --serif: 'Fraunces', serif;
-      --sans: 'DM Sans', sans-serif;
-      --mono: 'DM Mono', monospace;
+      --paper: #f8f6f0;
+      --card: #ffffff;
+      --ink: #1c1d20;
+      --muted: #5c6068;
+      --faint: #8b8f96;
+      --line: #e3dfd4;
+      --grid: rgba(28, 29, 32, 0.045);
+      --accent: #e0532b;      /* signal orange */
+      --accent-soft: #fdebe4;
+      --blue: #2563a8;
+      --blue-soft: #e7eff9;
+      --green: #2f8a57;
+      --code: #fbfaf7;
+      --serif: 'Fraunces', Georgia, serif;
+      --sans: 'IBM Plex Sans', system-ui, sans-serif;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --radius: 10px;
     }
 
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
-      color: var(--text);
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--ink);
       font-family: var(--sans);
-      font-size: 16px;
-      line-height: 1.6;
-      overflow-x: hidden;
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
     }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    a:hover { color: var(--accent); }
+    img { max-width: 100%; display: block; }
 
-    /* grain */
-    body::before {
-      content:''; position:fixed; inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events:none; z-index:999; opacity:.3;
-    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
 
     /* ── NAV ── */
     nav {
-      position:fixed; top:0; left:0; right:0; z-index:100;
-      display:flex; justify-content:space-between; align-items:center;
-      padding:1.1rem 3rem;
-      border-bottom:1px solid transparent;
-      transition: border-color .3s, background .3s;
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(248, 246, 240, 0.86);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
     }
-    nav.scrolled {
-      background:rgba(9,16,15,0.88);
-      backdrop-filter:blur(14px);
-      border-color:var(--border);
-    }
-    .nav-logo {
-      font-family:var(--mono); font-size:.8rem;
-      color:var(--accent); letter-spacing:.05em;
-    }
-    .nav-links { display:flex; gap:2rem; list-style:none; }
-    .nav-links a {
-      color:var(--muted); text-decoration:none;
-      font-size:.75rem; font-family:var(--mono);
-      letter-spacing:.08em; text-transform:uppercase;
-      transition:color .2s;
-    }
-    .nav-links a:hover { color:var(--accent); }
+    nav .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 60px; }
+    .logo { font-family: var(--mono); font-weight: 500; font-size: .92rem; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: .55rem; }
+    .led { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(47,138,87,.18); animation: blink 2.4s infinite; }
+    @keyframes blink { 0%, 70%, 100% { opacity: 1; } 80% { opacity: .25; } }
+    .nav-links { display: flex; gap: 1.6rem; list-style: none; }
+    .nav-links a { font-family: var(--mono); font-size: .8rem; color: var(--muted); text-decoration: none; }
+    .nav-links a:hover { color: var(--accent); }
 
     /* ── HERO ── */
-    #hero {
-      min-height:100vh;
-      display:grid; grid-template-columns:1fr 1fr;
-      align-items:center;
-      padding:8rem 3rem 4rem;
-      gap:4rem;
-      position:relative; overflow:hidden;
-    }
-    #hero::after {
-      content:''; position:absolute;
-      top:-20%; right:-10%; width:55vw; height:55vw;
-      background:radial-gradient(circle, rgba(61,255,160,0.05) 0%, transparent 70%);
-      pointer-events:none;
-    }
-    .hero-text { position:relative; z-index:1; }
-    .hero-tag {
-      font-family:var(--mono); font-size:.72rem;
-      color:var(--accent); letter-spacing:.12em;
-      text-transform:uppercase; margin-bottom:1rem;
-      display:flex; align-items:center; gap:.6rem;
-    }
-    .hero-tag::before {
-      content:''; display:inline-block;
-      width:24px; height:1px; background:var(--accent);
-    }
-    h1 {
-      font-family:var(--serif);
-      font-size:clamp(3.2rem,6vw,5.8rem);
-      line-height:1.0; color:var(--text); margin-bottom:1.4rem;
-      font-weight:600;
-    }
-    h1 em { font-style:italic; color:var(--accent); font-weight:300; }
-    .hero-sub {
-      color:var(--muted); font-size:1rem; font-weight:300;
-      max-width:400px; margin-bottom:2.2rem; line-height:1.75;
-    }
-    .hero-cta { display:flex; gap:1rem; flex-wrap:wrap; }
+    .hero { padding: 84px 0 56px; }
+    .hero-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 56px; align-items: center; }
+    .kicker { font-family: var(--mono); font-size: .82rem; color: var(--accent); margin-bottom: 18px; }
+    h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(3rem, 7vw, 5.4rem); line-height: .98; letter-spacing: -.02em; }
+    h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
+    .clock { margin: 22px 0 22px; width: 100%; max-width: 420px; height: 26px; }
+    .clock path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 6 0; }
+    .clock .sig { stroke: var(--accent); stroke-dasharray: 600; stroke-dashoffset: 600; animation: draw 2.6s ease-out .3s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .lede { font-size: 1.15rem; color: var(--muted); max-width: 560px; }
+    .lede strong { color: var(--ink); font-weight: 500; }
+    .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
     .btn {
-      display:inline-flex; align-items:center; gap:.5rem;
-      padding:.72rem 1.7rem;
-      font-family:var(--mono); font-size:.75rem;
-      letter-spacing:.08em; text-transform:uppercase;
-      text-decoration:none; border-radius:3px;
-      transition:all .2s; cursor:pointer;
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-family: var(--mono); font-size: .82rem; text-decoration: none;
+      padding: 10px 16px; border-radius: 8px; border: 1px solid var(--ink);
+      color: var(--ink); background: var(--card); transition: transform .15s, box-shadow .15s;
     }
-    .btn-primary { background:var(--accent); color:var(--bg); border:1px solid var(--accent); font-weight:500; }
-    .btn-primary:hover { background:transparent; color:var(--accent); }
-    .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
-    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+    .btn:hover { color: var(--ink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+    .btn.primary { background: var(--ink); color: var(--paper); }
+    .btn.primary:hover { color: var(--paper); box-shadow: 3px 3px 0 var(--accent); }
 
-    /* Hero photo */
-    .hero-image-area { position:relative; z-index:1; display:flex; justify-content:center; }
-    .photo-frame {
-      position:relative; width:310px; height:390px;
+    .portrait { position: relative; justify-self: center; width: min(340px, 100%); }
+    .portrait img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: top; border-radius: 14px; border: 1px solid var(--ink); box-shadow: 8px 8px 0 var(--accent-soft), 8px 8px 0 1px var(--ink); }
+    .tag-sticker {
+      position: absolute; left: -22px; bottom: 26px;
+      background: var(--card); border: 1px solid var(--ink); border-radius: 8px;
+      font-family: var(--mono); font-size: .74rem; padding: 8px 12px; line-height: 1.4;
+      transform: rotate(-3deg);
     }
-    .photo-frame::after {
-      content:''; position:absolute;
-      bottom:-10px; right:-10px;
-      width:100%; height:100%;
-      border:1px solid var(--dim);
-      border-radius:4px; z-index:-1;
+    .tag-sticker b { color: var(--accent); font-weight: 500; }
+
+    .now {
+      margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); overflow: hidden;
     }
-    .photo-frame img {
-      width:100%; height:100%; object-fit:cover;
-      border-radius:4px;
-      border:1px solid var(--border);
-      display:block;
-    }
-    .stat-chip {
-      position:absolute;
-      background:var(--surface2);
-      border:1px solid var(--border);
-      border-radius:6px; padding:.55rem .9rem;
-      font-family:var(--mono); font-size:.68rem;
-      color:var(--muted); white-space:nowrap;
-      backdrop-filter:blur(8px);
-    }
-    .stat-chip strong { color:var(--accent); display:block; font-size:1rem; }
-    .stat-chip:nth-child(2) { top:24px; right:-55px; }
-    .stat-chip:nth-child(3) { bottom:70px; left:-65px; }
+    .now div { padding: 16px 20px; border-right: 1px solid var(--line); }
+    .now div:last-child { border-right: 0; }
+    .now small { display: block; font-family: var(--mono); font-size: .72rem; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .now span { font-size: .95rem; }
 
     /* ── SECTIONS ── */
-    .section-wrap { max-width:1100px; margin:0 auto; padding:6rem 3rem; }
-    .section-label {
-      font-family:var(--mono); font-size:.68rem;
-      color:var(--accent); letter-spacing:.15em;
-      text-transform:uppercase; margin-bottom:.6rem;
-    }
-    h2 {
-      font-family:var(--serif);
-      font-size:clamp(1.9rem,3.5vw,2.8rem);
-      line-height:1.1; margin-bottom:2.8rem; color:var(--text);
-      font-weight:600;
-    }
-    .divider {
-      width:calc(100% - 6rem); height:1px;
-      background:var(--border); margin:0 3rem;
-    }
+    section { padding: 64px 0; }
+    .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px; }
+    .sec-num { font-family: var(--mono); font-size: .85rem; color: var(--accent); }
+    h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.01em; line-height: 1.1; }
+    .sec-sub { color: var(--muted); max-width: 640px; margin-bottom: 36px; }
 
-    /* ── ABOUT ── */
-    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start; }
-    .about-text p { color:var(--muted); font-weight:300; line-height:1.85; margin-bottom:1rem; font-size:.97rem; }
-    .about-img {
-      width:100%; aspect-ratio:4/3; object-fit:cover;
-      border-radius:4px; border:1px solid var(--border);
-      display:block;
+    /* ── PROJECT "DATASHEETS" ── */
+    .project {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      margin-bottom: 28px; overflow: hidden;
     }
-    .skills-grid { display:flex; flex-wrap:wrap; gap:.45rem; margin-top:1.5rem; }
-    .skill-tag {
-      font-family:var(--mono); font-size:.67rem;
-      padding:.28rem .65rem;
-      border:1px solid var(--border);
-      border-radius:2px; color:var(--muted);
-      letter-spacing:.05em; transition:all .15s;
+    .project-top { display: grid; grid-template-columns: 1.1fr 1fr; }
+    .project-info { padding: 28px 30px; }
+    .part {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      font-family: var(--mono); font-size: .74rem; color: var(--faint); margin-bottom: 10px;
     }
-    .skill-tag:hover { border-color:var(--accent); color:var(--accent); }
+    .part .ref { color: var(--paper); background: var(--ink); border-radius: 4px; padding: 1px 7px; }
+    h3 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; line-height: 1.15; margin-bottom: 10px; }
+    .project-info p { color: var(--muted); margin-bottom: 14px; }
+    .proof { list-style: none; margin: 4px 0 18px; display: grid; gap: 8px; }
+    .proof li { position: relative; padding-left: 22px; font-size: .95rem; }
+    .proof li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 600; }
+    .proof b { font-family: var(--mono); font-weight: 500; color: var(--ink); background: var(--blue-soft); padding: 0 4px; border-radius: 3px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+    .chips span { font-family: var(--mono); font-size: .72rem; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; color: var(--muted); }
+    .links { display: flex; flex-wrap: wrap; gap: 14px; font-family: var(--mono); font-size: .82rem; }
+    .links a { text-decoration: none; border-bottom: 1px solid currentColor; }
+    .links .private { color: var(--faint); }
+    .note { font-size: .85rem !important; font-style: italic; }
+
+    .project-media { background: var(--paper); border-left: 1px solid var(--line); display: grid; gap: 1px; align-content: stretch; }
+
+    /* Image slots: drop a file at the src path and it shows up; until then a dashed placeholder shows. */
+    .shot { position: relative; margin: 0; background: var(--paper); min-height: 220px; display: flex; flex-direction: column; }
+    .shot img { width: 100%; height: 100%; object-fit: cover; flex: 1; }
+    .shot.contain img { object-fit: contain; background: #fff; padding: 10px; }
+    .shot figcaption { font-family: var(--mono); font-size: .72rem; color: var(--muted); padding: 8px 14px; background: var(--card); border-top: 1px solid var(--line); }
+    .shot .slot { display: none; }
+    .shot.empty img { display: none; }
+    .shot.empty .slot {
+      display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      margin: 14px; border: 2px dashed #c9c3b4; border-radius: 8px; text-align: center; padding: 20px;
+      background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(224,83,43,.04) 10px, rgba(224,83,43,.04) 20px);
+      font-family: var(--mono); color: var(--faint); font-size: .76rem;
+    }
+    .shot.empty .slot strong { color: var(--accent); font-weight: 500; font-size: .8rem; letter-spacing: .04em; }
+    .shot.empty .slot code { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; color: var(--ink); }
+
+    /* code proof */
+    details.code { border-top: 1px solid var(--line); }
+    details.code summary {
+      cursor: pointer; list-style: none; padding: 12px 30px;
+      font-family: var(--mono); font-size: .8rem; color: var(--muted);
+      display: flex; justify-content: space-between; gap: 12px; background: var(--code);
+    }
+    details.code summary::-webkit-details-marker { display: none; }
+    details.code summary::after { content: '+ show code'; color: var(--blue); white-space: nowrap; }
+    details.code[open] summary::after { content: '− hide code'; }
+    details.code summary .file { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    details.code summary .file b { color: var(--ink); font-weight: 500; }
+    pre { margin: 0; max-height: 440px; overflow: auto; background: var(--code); border-top: 1px dashed var(--line); }
+    pre code.hljs { background: transparent; padding: 18px 30px; font-family: var(--mono); font-size: .8rem; line-height: 1.6; }
 
     /* ── EXPERIENCE ── */
-    .exp-list { display:flex; flex-direction:column; }
-    .exp-item {
-      display:grid; grid-template-columns:155px 1fr;
-      gap:2rem; padding:2.4rem 0;
-      border-bottom:1px solid var(--border);
-    }
-    .exp-item:first-child { border-top:1px solid var(--border); }
-    .exp-date { font-family:var(--mono); font-size:.68rem; color:var(--dim); padding-top:.2rem; letter-spacing:.04em; }
-    .exp-content h3 { font-family:var(--serif); font-size:1.2rem; margin-bottom:.15rem; color:var(--text); }
-    .exp-company { font-family:var(--mono); font-size:.72rem; color:var(--accent); margin-bottom:.7rem; letter-spacing:.05em; }
-    .exp-content ul { list-style:none; display:flex; flex-direction:column; gap:.35rem; }
-    .exp-content li {
-      color:var(--muted); font-size:.88rem; font-weight:300;
-      padding-left:1rem; position:relative; line-height:1.6;
-    }
-    .exp-content li::before { content:'→'; position:absolute; left:0; color:var(--dim); font-size:.78rem; }
-    .exp-img {
-      width:100%; aspect-ratio:16/9; object-fit:cover;
-      border-radius:4px; border:1px solid var(--border);
-      margin-top:1rem; display:block;
-    }
+    .xp { display: grid; grid-template-columns: 170px 1fr; gap: 28px; padding: 30px 0; border-top: 1px solid var(--line); }
+    .xp:last-of-type { border-bottom: 1px solid var(--line); }
+    .xp-when { font-family: var(--mono); font-size: .8rem; color: var(--faint); padding-top: 6px; }
+    .xp h3 { font-size: 1.35rem; margin-bottom: 2px; }
+    .xp .org { font-family: var(--mono); font-size: .8rem; color: var(--accent); margin-bottom: 12px; }
+    .xp ul { list-style: none; display: grid; gap: 6px; margin-bottom: 14px; }
+    .xp li { position: relative; padding-left: 20px; color: var(--muted); font-size: .96rem; }
+    .xp li::before { content: '→'; position: absolute; left: 0; color: var(--faint); }
+    .xp li b { color: var(--ink); font-weight: 500; }
+    .xp-media { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 6px; }
+    .xp-media .shot { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-height: 200px; }
+    .xp-media .shot img { aspect-ratio: 4 / 3; }
+    .xp-media .shot.contain img { aspect-ratio: auto; }
+    .xp details.code { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-top: 12px; }
+    .xp details.code summary { padding: 10px 18px; }
+    .xp pre code.hljs { padding: 16px 18px; }
 
-    /* ── PROJECTS ── */
-    .projects-note {
-      color:var(--muted); font-size:.9rem; font-weight:300;
-      max-width:560px; margin:-1.6rem 0 2.4rem; line-height:1.7;
-    }
-    .projects-grid {
-      display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
-      gap:1.4rem;
-    }
-    .project-card {
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:6px; overflow:hidden;
-      transition:border-color .2s, transform .2s;
-    }
-    .project-card:hover { border-color:var(--accent); transform:translateY(-3px); }
-    .project-card img {
-      width:100%; aspect-ratio:16/9; object-fit:cover;
-      display:block; border-bottom:1px solid var(--border);
-    }
-    .project-body { padding:1.3rem; }
-    .project-body h3 { font-family:var(--serif); font-size:1.1rem; margin-bottom:.45rem; color:var(--text); }
-    .project-body p { color:var(--muted); font-size:.84rem; font-weight:300; line-height:1.6; margin-bottom:.9rem; }
-    .project-tags { display:flex; flex-wrap:wrap; gap:.35rem; }
-    .project-tags span {
-      font-family:var(--mono); font-size:.62rem;
-      padding:.18rem .5rem; background:var(--bg);
-      border:1px solid var(--border); border-radius:2px;
-      color:var(--dim); letter-spacing:.04em;
-    }
-    /* Project image placeholder — looks intentional until a real image is added */
-    .project-img-placeholder {
-      width:100%; aspect-ratio:16/9;
-      display:flex; align-items:center; justify-content:center;
-      border-bottom:1px dashed var(--dim);
-      background:repeating-linear-gradient(45deg, var(--surface), var(--surface) 14px, var(--surface2) 14px, var(--surface2) 28px);
-      font-family:var(--mono); font-size:.68rem; color:var(--dim);
-      letter-spacing:.1em; text-transform:uppercase;
-    }
-    /* A visibly-marked placeholder card: swap title, text, tags and image when ready */
-    .project-card.placeholder { border-style:dashed; border-color:var(--dim); }
-    .project-card.placeholder:hover { border-color:var(--accent); }
-    .project-card .coming-soon {
-      display:inline-block; font-family:var(--mono); font-size:.62rem;
-      color:var(--accent); letter-spacing:.1em; text-transform:uppercase;
-      border:1px solid var(--dim); border-radius:2px;
-      padding:.18rem .5rem; margin-bottom:.7rem;
-    }
-
-    /* ── RESEARCH ── */
-    .research-list { display:flex; flex-direction:column; gap:1.3rem; }
-    .research-card {
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:6px; overflow:hidden;
-      transition:border-color .2s;
-      display:grid; grid-template-columns:220px 1fr;
-    }
-    .research-card:hover { border-color:var(--accent); }
-    .research-card img { width:100%; height:100%; object-fit:cover; display:block; }
-    .research-body { padding:1.6rem 1.8rem; }
-    .research-body h3 { font-family:var(--serif); font-size:1.1rem; margin-bottom:.2rem; }
-    .research-body .mentor { font-family:var(--mono); font-size:.7rem; color:var(--accent); margin-bottom:.6rem; letter-spacing:.04em; }
-    .research-body .date { font-family:var(--mono); font-size:.67rem; color:var(--dim); margin-bottom:.55rem; }
-    .research-body p { color:var(--muted); font-size:.86rem; font-weight:300; line-height:1.65; }
-
-    /* ── AWARDS ── */
-    .awards-strip { display:flex; flex-wrap:wrap; gap:.9rem; }
-    .award-pill {
-      display:flex; align-items:center; gap:.55rem;
-      background:var(--surface); border:1px solid var(--border);
-      padding:.65rem 1.1rem; border-radius:4px;
-      font-size:.84rem; color:var(--muted); transition:all .15s;
-    }
-    .award-pill:hover { border-color:var(--accent); color:var(--text); }
-    .award-pill::before { content:'★'; color:var(--accent); font-size:.65rem; }
+    /* ── TOOLBOX ── */
+    .toolbox { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .tool { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; }
+    .tool h4 { font-family: var(--mono); font-size: .78rem; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .tool .chips { margin: 0; }
+    .tool .chips span { color: var(--ink); background: var(--paper); }
 
     /* ── CONTACT ── */
-    #contact { text-align:center; }
-    #contact p { color:var(--muted); font-size:1rem; font-weight:300; margin-bottom:2.2rem; }
-    .contact-links { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top:1px solid var(--border); padding:1.4rem 3rem;
-      display:flex; justify-content:space-between; align-items:center;
+    .contact {
+      background: var(--ink); color: var(--paper); border-radius: 16px; padding: 48px;
+      display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: center;
     }
-    footer span { font-family:var(--mono); font-size:.68rem; color:var(--dim); letter-spacing:.06em; }
+    .contact h2 { color: var(--paper); }
+    .contact p { color: #b9b6ad; margin-top: 10px; }
+    .contact .btn { border-color: var(--paper); }
+    .contact .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .contact .btn:hover { box-shadow: 3px 3px 0 var(--paper); }
+    .contact .cta { justify-content: flex-end; margin: 0; }
 
-    /* ── ANIMATIONS ── */
-    .fade-up { opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s ease; }
-    .fade-up.visible { opacity:1; transform:translateY(0); }
+    footer { padding: 36px 0 48px; font-family: var(--mono); font-size: .76rem; color: var(--faint); }
+    footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+    /* reveal */
+    .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+    .js .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .js .reveal { opacity: 1; transform: none; transition: none; }
+      .led, .clock .sig { animation: none; stroke-dashoffset: 0; }
+    }
 
     /* ── RESPONSIVE ── */
-    @media (max-width:768px) {
-      #hero { grid-template-columns:1fr; padding:7rem 1.5rem 3rem; gap:2.5rem; }
-      .hero-image-area { order:-1; }
-      .photo-frame { width:230px; height:290px; }
-      .stat-chip:nth-child(2) { right:-8px; }
-      .stat-chip:nth-child(3) { left:-8px; }
-      .about-grid { grid-template-columns:1fr; gap:2rem; }
-      .exp-item { grid-template-columns:1fr; gap:.4rem; }
-      .research-card { grid-template-columns:1fr; }
-      .research-card img { height:160px; }
-      .section-wrap { padding:4rem 1.5rem; }
-      .divider { width:calc(100% - 3rem); margin:0 1.5rem; }
-      nav { padding:1rem 1.5rem; }
-      .nav-links { gap:1.2rem; }
-      footer { flex-direction:column; gap:.5rem; text-align:center; }
+    @media (max-width: 860px) {
+      .hero { padding-top: 48px; }
+      .hero-grid, .project-top, .contact { grid-template-columns: 1fr; }
+      .portrait { order: -1; width: min(260px, 80%); }
+      .project-media { border-left: 0; border-top: 1px solid var(--line); }
+      .now { grid-template-columns: 1fr; }
+      .now div { border-right: 0; border-bottom: 1px solid var(--line); }
+      .now div:last-child { border-bottom: 0; }
+      .xp { grid-template-columns: 1fr; gap: 6px; }
+      .toolbox { grid-template-columns: 1fr; }
+      .contact { padding: 32px 24px; }
+      .contact .cta { justify-content: flex-start; }
+      .nav-links { gap: 1rem; }
+      .nav-links li.opt { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .project-info { padding: 22px 18px; }
+      details.code summary { padding: 12px 18px; }
+      pre code.hljs { padding: 16px 18px; }
+      .tag-sticker { left: -8px; }
+      .logo { font-size: .8rem; }
+      .nav-links { gap: .8rem; }
+      .nav-links a { font-size: .72rem; }
     }
   </style>
 </head>
 <body>
 
-<nav id="navbar">
-  <div class="nav-logo">Ishaan Parikh</div>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#research">Research</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
+<!--
+  HOW TO ADD PHOTOS
+  Every image on this page is a "slot": <figure class="shot"> with an <img src="images/...">.
+  If the file exists it shows; if not, a dashed "PHOTO SLOT" placeholder shows the exact
+  filename to use. So to add a photo, just save it in images/ with that name. No HTML edits needed.
+  See images/README.md for the full list of slots.
+-->
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="led"></span>ishaan.parikh</a>
+    <ul class="nav-links">
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#experience">experience</a></li>
+      <li class="opt"><a href="#toolbox">toolbox</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </div>
 </nav>
 
-<section id="hero">
-  <div class="hero-text fade-up">
-    <div class="hero-tag">ECE @ Cornell · Class of 2028</div>
-    <h1>Ishaan<br/><em>Parikh</em></h1>
-    <p class="hero-sub">
-      I build things that think — from computer vision systems on EV motorcycles to self-driving perception stacks. Somewhere between embedded hardware and quantum ML.
-    </p>
-    <div class="hero-cta">
-      <a href="mailto:idp7@cornell.edu" class="btn btn-primary">idp7@cornell.edu</a>
-      <a href="#projects" class="btn btn-ghost">View Work ↓</a>
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">// electrical &amp; computer engineering @ cornell</div>
+        <h1>Ishaan<br/><em>Parikh</em></h1>
+        <svg class="clock" viewBox="0 0 420 26" aria-hidden="true">
+          <path class="sig" d="M0 22 H20 V4 H50 V22 H80 V4 H110 V22 H140 V4 H170 V22 H200 V4 H230 V22 H260 V4 H290 V22 H320 V4 H350 V22 H380 V4 H410 V22 H420" />
+        </svg>
+        <p class="lede">I like the part of engineering where <strong>the math has to fit in hardware</strong>: fixed-point bit widths, cycle counts, PCB layers, and testbenches that won't let me lie to myself. Right now that means FPGA accelerators and DSP, with a side of SLAM and battery management.</p>
+        <div class="cta">
+          <a class="btn primary" href="#projects">see the work ↓</a>
+          <a class="btn" href="https://github.com/IshaanParikh" target="_blank" rel="noopener">github</a>
+          <a class="btn" href="https://linkedin.com/in/Ishaan-Parikh10/" target="_blank" rel="noopener">linkedin</a>
+          <a class="btn" href="mailto:idp7@cornell.edu">idp7@cornell.edu</a>
+        </div>
+      </div>
+      <div class="portrait">
+        <img src="images/headshot.jpg" alt="Ishaan Parikh" />
+        <div class="tag-sticker">GPA <b>3.83</b> · ECE<br/>Ithaca, NY</div>
+      </div>
+    </div>
+
+    <div class="now reveal">
+      <div><small>building</small><span>An INT8 CNN accelerator on FPGA for Cornell Electric Vehicles</span></div>
+      <div><small>just shipped</small><span>A 4S battery management system at Low Light Innovations</span></div>
+      <div><small>also</small><span>VP of Internal Affairs, Kappa Theta Pi</span></div>
     </div>
   </div>
-  <div class="hero-image-area fade-up">
-    <div class="photo-frame">
-      <img src="images/headshot.jpg" alt="Ishaan Parikh Headshot" />
-      <div class="stat-chip"><strong>10+</strong> Projects Built</div>
-      <div class="stat-chip"><strong>3.8</strong>GPA</div>
+</header>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Projects</h2></div>
+    <p class="sec-sub">Each one comes with receipts: the numbers, the repo, and a chunk of the actual code. Click <span style="font-family:var(--mono);color:var(--blue)">+ show code</span> on any card.</p>
+
+    <!-- ─────────────── U1: CNN accelerator ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U1</span>FPGA · Cornell Electric Vehicles · Sep 2026 – now</div>
+          <h3>FPGA CNN Accelerator</h3>
+          <p>An FPGA accelerator for INT8 inference on LFD-RoadSeg, the ResNet-18 lane-segmentation network the CEV car drives on. We're prototyping on MNIST first. My part is the arithmetic: how wide every wire needs to be, and how to do fewer multiplies.</p>
+          <ul class="proof">
+            <li>Specified INT8 math with wide accumulators and <b>multiply-and-shift</b> rescaling, so there are no dividers in hardware</li>
+            <li>Sized the problem: one 3×3 RoadSeg layer is <b>1.1 B multiplies</b> and <b>3.9 MB</b> of memory per frame</li>
+            <li>Wrote an integer-only Winograd F(2×2, 3×3) golden model: <b>16 multiplies</b> per tile instead of 36, checked bit-exact on <b>100,000</b> random tiles plus corner cases</li>
+            <li>Sized the MNIST prototype's block RAM at <b>88.5 kB</b> and drafted the FSM that sequences its conv and pool layers</li>
+          </ul>
+          <div class="chips"><span>Verilog</span><span>SystemVerilog</span><span>Python</span><span>INT8 quantization</span><span>Winograd</span></div>
+          <div class="links"><a href="https://github.com/cornellev/cnn-accelerator" target="_blank" rel="noopener">cornellev/cnn-accelerator ↗</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot">
+            <img src="images/cnn_accelerator.jpg" alt="FPGA CNN accelerator" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>FPGA board or simulation waveform<code>images/cnn_accelerator.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+      <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>cev/winograd/winograd_golden.py</b></span></summary>
+        <pre><code class="language-python"># Transform matrices (Lavin &amp; Gray). G2 = 2*G so every entry is an integer.
+BT = np.array([[1, 0, -1, 0], [0, 1, 1, 0], [0, -1, 1, 0], [0, 1, 0, -1]])
+G2 = np.array([[2, 0, 0], [1, 1, 1], [1, -1, 1], [0, 0, 2]])
+AT = np.array([[1, 1, 1, 0], [0, 1, -1, -1]])
+
+def winograd_conv(d, g, stats=None):
+    """Channel sum happens BEFORE the output transform, so there is
+    one output transform per tile per output channel."""
+    U = weight_transform(g)        # G2 g G2^T, done offline
+    V = input_transform(d)         # B^T d B, adders only
+    M = U * V                      # 16 multiplies per channel (direct: 36)
+    S = M.sum(axis=0)              # accumulate over input channels
+    Y = AT @ S @ AT.T              # adders only
+    return Y
+
+def check(d, g, stats):
+    y_dir = direct_conv(d, g)
+    y_win = winograd_conv(d, g, stats)
+    if not np.array_equal(y_win, 4 * y_dir):   # bit-exact, integers only
+        raise AssertionError("mismatch")</code></pre>
+      </details>
+    </article>
+
+    <!-- ─────────────── U2: RRC matched filter ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U2</span>DSP · FPGA · Jul 2026 – now</div>
+          <h3>RRC Matched Filter for a QPSK Receiver</h3>
+          <p>A 33-tap root-raised-cosine matched filter built from hand-rolled radix-4 Booth multipliers, wrapped in AXI4-Stream with back-pressure, and checked bit-for-bit against a Python model on real modulated data. The constellation on the right is the proof: noisy in, four clean clusters out.</p>
+          <ul class="proof">
+            <li><b>0 mismatches</b> in 16,384 filter outputs vs. the bit-exact golden model</li>
+            <li>Booth multiplier: <b>0 errors</b> in 81,986 comparisons against Verilog <code>*</code></li>
+            <li><b>16,412 beats in, 16,412 out</b> under random stalls and gaps (no drops, no duplicates)</li>
+            <li>Bit error rate within <b>1.10×</b> of theoretical QPSK; +5.19 dB matched-filter gain</li>
+            <li>21-tap version runs on a Cyclone IV at <b>129 MHz</b> using 74% of logic elements</li>
+          </ul>
+          <div class="chips"><span>Verilog</span><span>Python</span><span>Quartus</span><span>Icarus Verilog</span><span>AXI4-Stream</span></div>
+          <div class="links"><a href="https://github.com/IshaanParikh/rrc-matched-filter" target="_blank" rel="noopener">IshaanParikh/rrc-matched-filter ↗</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot contain">
+            <img src="images/rrc_constellation.jpg" alt="QPSK constellation before and after the RRC filter" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>QPSK at +2 dB SNR: raw samples (left) vs. after the Verilog filter (right)</figcaption>
+          </figure>
+          <figure class="shot contain">
+            <img src="images/rrc_eye.jpg" alt="Eye diagram of the filtered signal" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>Eye diagram on a clean channel: open at the sampling instant (zero ISI)</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="images/rrc_fpga_board.jpg" alt="RRC filter running on the Cyclone IV board" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>Cyclone IV board running the filter<code>images/rrc_fpga_board.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+      <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>rtl/booth_mult_r4.v</b></span></summary>
+        <pre><code class="language-verilog">// S1: register operands, precompute the 4 multiples once
+always @(posedge clk) begin
+    if (en) begin
+        mult_p1 &lt;=   a_ext;
+        mult_p2 &lt;=   a_ext &lt;&lt;&lt; 1;
+        mult_n1 &lt;= -(a_ext);
+        mult_n2 &lt;= -(a_ext &lt;&lt;&lt; 1);
+        b_s1    &lt;=   b;
+    end
+end
+
+// S2a: recode + select partial products (one 5:1 mux each)
+for (i = 0; i &lt; N_PP; i = i + 1) begin : g_pp
+    wire [2:0] grp = b_ext[2*i +: 3];
+    always @(*) begin
+        case (grp)
+            3'b001, 3'b010: sel = mult_p1;   // +1
+            3'b011:         sel = mult_p2;   // +2
+            3'b100:         sel = mult_n2;   // -2
+            3'b101, 3'b110: sel = mult_n1;   // -1
+            default:        sel = 0;
+        endcase
+    end
+    assign pp[i] = sel_ext &lt;&lt;&lt; (2*i);
+end</code></pre>
+      </details>
+    </article>
+
+    <!-- ─────────────── U3: ITCH feed handler ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U3</span>FPGA · Trading systems · Apr – Jul 2026</div>
+          <h3>Nasdaq ITCH 5.0 FPGA Feed Handler</h3>
+          <p>A hardware market-data path: a byte-serial framing FSM decodes Nasdaq ITCH messages, feeds an order book held in hardware, and an OUCH encoder sends orders back out. Every block has its own cocotb testbench and a Python reference model.</p>
+          <ul class="proof">
+            <li><b>36 cocotb tests</b> on Verilator across the decoder, order book, OUCH encoder, and full integration</li>
+            <li>Checked <b>500 seeded messages</b> against the Python model, with invalid order references in <b>15%</b> of them on purpose</li>
+            <li>Tracked an integration mismatch down to decode errors registering <b>one cycle</b> ahead of order-book outputs</li>
+          </ul>
+          <div class="chips"><span>SystemVerilog</span><span>cocotb</span><span>Verilator</span><span>Python</span><span>Vivado</span></div>
+          <div class="links"><a href="https://github.com/IshaanParikh/FPGA-market-maker" target="_blank" rel="noopener">IshaanParikh/FPGA-market-maker ↗</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot">
+            <img src="images/itch_waveform.jpg" alt="ITCH decoder simulation waveform" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>Waveform screenshot or block diagram<code>images/itch_waveform.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+      <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>rtl/decode/itch_decode.sv</b></span></summary>
+        <pre><code class="language-verilog">typedef enum logic [1:0] { ST_LEN_HI, ST_LEN_LO, ST_BODY, ST_DECODE } state_e;
+
+function automatic logic [5:0] expected_len(logic [7:0] mtype);
+  case (mtype)
+    "A": expected_len = 6'd36;   // add order
+    "F": expected_len = 6'd40;   // add order w/ MPID
+    "E": expected_len = 6'd31;   // executed
+    "C": expected_len = 6'd36;   // executed w/ price
+    "X": expected_len = 6'd23;   // cancel
+    "D": expected_len = 6'd19;   // delete
+    "U": expected_len = 6'd35;   // replace
+    default: expected_len = 6'd0;
+  endcase
+endfunction
+
+always_ff @(posedge clk) begin
+  case (state)
+    ST_LEN_HI: if (valid_in) begin
+      frame_len[15:8] &lt;= data_in;
+      state           &lt;= ST_LEN_LO;
+    end
+    ST_LEN_LO: if (valid_in) begin
+      frame_len[7:0] &lt;= data_in;
+      byte_cnt       &lt;= '0;
+      // a declared length of 0 has no body to read, decode right away
+      state &lt;= ({frame_len[15:8], data_in} == 16'd0) ? ST_DECODE : ST_BODY;
+    end
+    ST_BODY: if (valid_in) begin
+      if (byte_cnt &lt; MAX_BODY_BYTES[15:0]) body[byte_cnt[5:0]] &lt;= data_in;
+      if (byte_cnt == frame_len - 16'd1) state &lt;= ST_DECODE;
+      else byte_cnt &lt;= byte_cnt + 16'd1;
+    end
+    // ...</code></pre>
+      </details>
+    </article>
+
+    <!-- ─────────────── U4: SLAM ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U4</span>Robotics · Cornell Electric Vehicles · 2026</div>
+          <h3>Pose-Graph SLAM with a Sliding Window</h3>
+          <p>The localization backend for CEV's autonomous car: a C++ pose-graph optimizer on ROS 2 that fuses LiDAR odometry and IMU. The sliding-window version keeps only the last 20 keyframes, so solve time stays flat no matter how long the car drives.</p>
+          <ul class="proof">
+            <li>Gauss-Newton on a sparse information matrix with Eigen's <b>SimplicialLDLT</b>, 5 iterations per keyframe</li>
+            <li>New keyframe every <b>0.3 m</b> or <b>~15°</b>; oldest pose marginalized out past <b>20</b></li>
+            <li>Fixed a subtle bug where edges used a global-frame delta as the measurement, so the optimizer fought the odometry</li>
+            <li>SLAM running at <b>30 Hz</b> on 3D LiDAR + IMU input</li>
+          </ul>
+          <div class="chips"><span>C++</span><span>ROS 2</span><span>Eigen</span><span>LiDAR</span><span>IMU</span></div>
+          <div class="links">
+            <a href="https://github.com/cornellev/SLAM-sliding-window" target="_blank" rel="noopener">cornellev/SLAM-sliding-window ↗</a>
+            <a href="https://github.com/cornellev/SLAMv2" target="_blank" rel="noopener">cornellev/SLAMv2 ↗</a>
+          </div>
+        </div>
+        <div class="project-media">
+          <figure class="shot">
+            <img src="images/slam_vis.jpg" alt="LiDAR point cloud and pose graph in RViz" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>LiDAR map and pose estimates in RViz</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="images/slam_car.jpg" alt="CEV car with the LiDAR mounted" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>The car / sensor rig<code>images/slam_car.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+      <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>src/cev_pose_graph_slam/src/SLAM_backend_math.cpp</b></span></summary>
+        <pre><code class="language-cpp">static constexpr int WINDOW_SIZE = 20;
+
+void marginalize() {
+    // Remove the sequential edge (0,1), the only edge incident to local index 0
+    W_edges_.erase(std::remove_if(W_edges_.begin(), W_edges_.end(),
+        [](const Edge2&amp; e){ return e.i == 0 || e.j == 0; }), W_edges_.end());
+    W_.pop_front();                              // drop oldest pose
+    for (auto&amp; e : W_edges_) { e.i--; e.j--; }   // shift window-local indices
+}
+
+// in odom_callback: new keyframe every 0.3 m or ~15 degrees
+if (travel_dist &gt; 0.3 || rotation_dist &gt; 0.26) {
+    double c = std::cos(last.th), s = std::sin(last.th);
+    // measurement in the previous pose's body frame
+    Eigen::Vector3d z(c*dx + s*dy, -s*dx + c*dy, wrapAngle(cur_th - last.th));
+    W_.push_back({cur_x, cur_y, cur_th});
+    W_edges_.push_back({(int)W_.size()-2, (int)W_.size()-1, z, info});
+
+    if ((int)W_.size() &gt; WINDOW_SIZE) marginalize();   // slide the window
+    for (int it = 0; it &lt; 5; ++it)
+        gaussNewtonStep(W_, W_edges_, 1e-6);           // sparse H, SimplicialLDLT
+}</code></pre>
+      </details>
+    </article>
+
+    <!-- ─────────────── U5: IGVC dashboard ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U5</span>Web + ROS 2 · Cornell Electric Vehicles · Spring 2026</div>
+          <h3>IGVC Telemetry Dashboard</h3>
+          <p>The CEV team's live telemetry and replay dashboard for the Intelligent Ground Vehicle Competition car: speed, power, GPS, steering, brake, throttle, wheel RPM, and camera feed over ROS 2, plus a replay mode for logged runs.</p>
+          <!-- TODO(Ishaan): add a line or two on what you built here, e.g. which ROS topics or widgets were yours. -->
+          <p class="note">My role: <span style="background:var(--accent-soft);padding:0 4px;border-radius:3px">[add your part here]</span></p>
+          <div class="chips"><span>React</span><span>TypeScript</span><span>Python</span><span>ROS 2</span><span>Docker</span></div>
+          <div class="links"><a href="https://github.com/cornellev/igvc-dashboard" target="_blank" rel="noopener">cornellev/igvc-dashboard ↗</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot">
+            <img src="images/igvc_dashboard.jpg" alt="IGVC live dashboard" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>Live mode</figcaption>
+          </figure>
+        </div>
+      </div>
+    </article>
+
+    <!-- ─────────────── U6: Polymer GNN ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U6</span>ML · Materials · Jun – Aug 2025</div>
+          <h3>Polymer Property Prediction with GNNs</h3>
+          <p>For the NeurIPS Open Polymer Challenge: predict five properties (glass transition temperature, free volume, crystallization temperature, density, radius of gyration) straight from a polymer's SMILES string. Molecules become graphs; a GCN learns from atoms and bonds.</p>
+          <ul class="proof">
+            <li>Trained on <b>7,973</b> polymers with sparse labels, masking missing targets in the loss</li>
+            <li>Ensembled LSTM + GNN + random forest; dev-test MSE <b>163.8</b> (RF) and <b>169.5</b> (GNN) vs. 240.5 (LSTM)</li>
+            <li>Ran LAMMPS molecular dynamics to generate extra data and benchmark the models</li>
+          </ul>
+          <div class="chips"><span>PyTorch Geometric</span><span>RDKit</span><span>LAMMPS</span><span>Optuna</span></div>
+          <div class="links"><a href="https://github.com/IshaanParikh/Polymer-prediction" target="_blank" rel="noopener">IshaanParikh/Polymer-prediction ↗</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot contain">
+            <img src="images/polymer.jpg" alt="LAMMPS polymer simulation" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>LAMMPS simulation of polymer chains on a substrate</figcaption>
+          </figure>
+        </div>
+      </div>
+      <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>GNN_Polymer_Prediction_All.ipynb</b></span></summary>
+        <pre><code class="language-python">def smiles_to_graph(smiles, y):
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return None
+    x = torch.stack([atom_features(atom) for atom in mol.GetAtoms()])
+    edge_index, edge_attr = [], []
+    for bond in mol.GetBonds():
+        i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
+        edge_index += [[i, j], [j, i]]
+        edge_attr  += [bond_features(bond), bond_features(bond)]
+    edge_index = torch.tensor(edge_index, dtype=torch.long).t().contiguous()
+    return Data(x=x, edge_index=edge_index, edge_attr=torch.stack(edge_attr),
+                y=torch.tensor([y], dtype=torch.float))
+
+class GNNRegressor(nn.Module):
+    def __init__(self, node_feat_dim, hidden_dim=64):
+        super().__init__()
+        self.conv1 = GCNConv(node_feat_dim, hidden_dim)
+        self.conv2 = GCNConv(hidden_dim, hidden_dim)
+        self.lin1  = nn.Linear(hidden_dim, 64)
+        self.lin2  = nn.Linear(64, 1)
+
+    def forward(self, data):
+        x = torch.relu(self.conv1(data.x, data.edge_index))
+        x = torch.relu(self.conv2(x, data.edge_index))
+        x = global_mean_pool(x, data.batch)
+        return self.lin2(torch.relu(self.lin1(x)))</code></pre>
+      </details>
+    </article>
+
+    <!-- ─────────────── U7: X-ray ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U7</span>ML · Medical imaging · Kaggle</div>
+          <h3>Chest X-ray COVID-19 / Pneumonia Detection</h3>
+          <p>A two-stage pipeline for the SIIM-COVID19 Kaggle competition. YOLOv5 finds and boxes lung opacities in each image; an ensemble of CNNs classifies the whole study as negative, typical, indeterminate, or atypical.</p>
+          <ul class="proof">
+            <li>DICOM decoding with <b>VOI LUT</b> windowing and MONOCHROME1 inversion so every scan reads the same way</li>
+            <li>Rescaled YOLO boxes from 512 px back to each original DICOM's dimensions</li>
+            <li>Averaged predictions across ensemble members and across every image in a study</li>
+          </ul>
+          <div class="chips"><span>YOLOv5</span><span>TensorFlow</span><span>PyTorch</span><span>pydicom</span></div>
+          <div class="links"><a href="https://github.com/IshaanParikh/Xray-pneumonia-detection" target="_blank" rel="noopener">IshaanParikh/Xray-pneumonia-detection ↗</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot contain">
+            <img src="images/xray.jpg" alt="Chest X-ray with predicted opacity boxes" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>Predicted (red) vs. ground-truth (green) opacity boxes</figcaption>
+          </figure>
+        </div>
+      </div>
+      <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>submission-ishaan.ipynb</b></span></summary>
+        <pre><code class="language-python"># YOLOv5 returns x_center, y_center, width, height; Kaggle wants corners
+def correct_bbox_format(bboxes):
+    correct_bboxes = []
+    for b in bboxes:
+        xc, yc = int(np.round(b[0]*IMG_SIZE)), int(np.round(b[1]*IMG_SIZE))
+        w, h = int(np.round(b[2]*IMG_SIZE)), int(np.round(b[3]*IMG_SIZE))
+        xmin, xmax = xc - int(np.round(w/2)), xc + int(np.round(w/2))
+        ymin, ymax = yc - int(np.round(h/2)), yc + int(np.round(h/2))
+        correct_bboxes.append([xmin, xmax, ymin, ymax])
+    return correct_bboxes
+
+# Study-level: average every CNN in the ensemble...
+predictions = []
+for model in study_models:
+    tf.keras.backend.clear_session()
+    model = tf.keras.models.load_model(STUDY_MODEL_PATHS + model)
+    tmp = []
+    for img_batch in tqdm(testloader):
+        tmp.extend(model.predict(img_batch))
+    predictions.append(tmp)
+    del model; gc.collect()
+predictions = np.mean(predictions, axis=0)   # ...then across images per study</code></pre>
+      </details>
+    </article>
+
+    <!-- ─────────────── U8: Tils ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U8</span>Side project · Web · Fall 2026</div>
+          <h3>Tils: rank movies by gut</h3>
+          <p>"List" backwards. Instead of star ratings, you answer <em>this or that?</em> and every pick updates both your personal ranking and a global Elo for the title. It's a browser prototype with a Wikidata-backed catalog.</p>
+          <ul class="proof">
+            <li>Elo with draws (<b>K = 24</b>) for "too close to call"; your list rescales to a 0–10 score</li>
+            <li>Pair picker introduces new titles early, then pits close-rated titles so the list settles fast</li>
+            <li>Ranking logic is pure and unit-tested with <b>node:test</b></li>
+          </ul>
+          <div class="chips"><span>JavaScript</span><span>Vite</span><span>Elo</span></div>
+          <!-- TODO(Ishaan): once the repo is public or deployed, swap this for a real link. -->
+          <div class="links"><span class="private">repo private for now</span></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot">
+            <img src="images/tils.jpg" alt="Tils compare screen" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>Screenshot of the Compare screen<code>images/tils.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+      <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>src/core.js</b></span></summary>
+        <pre><code class="language-javascript">export const K = 24;
+export const START = 1500;
+
+export function expected(a, b) {
+  return 1 / (1 + 10 ** ((b - a) / 400));
+}
+
+// result is 1 if a wins, 0 if b wins, 0.5 for a draw ("too close to call").
+export function eloUpdate(a, b, result = 1, k = K) {
+  const delta = k * (result - expected(a, b));
+  return [a + delta, b - delta];
+}
+
+// Score 0-10: rank sets the spread, so your favorite is always 10.
+export function listScores(list) {
+  const n = list.length;
+  return Object.fromEntries(list.map((id, i) =&gt;
+    [id, Math.round((10 - (8 * i) / Math.max(n - 1, 1)) * 10) / 10]));
+}</code></pre>
+      </details>
+    </article>
+
+    <!-- ─────────────── TEMPLATE: copy this block to add a project ───────────────
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U9</span>Category · Month Year – now</div>
+          <h3>Project name</h3>
+          <p>What it is and why it's interesting, in two sentences.</p>
+          <ul class="proof">
+            <li>A result with a <b>number</b></li>
+          </ul>
+          <div class="chips"><span>Tool</span><span>Tool</span></div>
+          <div class="links"><a href="https://github.com/..." target="_blank" rel="noopener">repo ↗</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot">
+            <img src="images/new_project.jpg" alt="" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>What goes here<code>images/new_project.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+    </article>
+    ──────────────────────────────────────────────────────────────────────────── -->
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Experience</h2></div>
+    <p class="sec-sub">Jobs, labs, and the team where I spend most of my nights.</p>
+
+    <div class="xp reveal">
+      <div class="xp-when">Jul – Sep 2026</div>
+      <div>
+        <h3>Electrical Intern</h3>
+        <div class="org">Low Light Innovations · remote</div>
+        <ul>
+          <li>Designed a <b>two-board 4S battery management system</b> for night-vision headsets, on 4- and 6-layer PCBs in Altium</li>
+          <li>Implemented a firmware safety interlock that <b>refuses to charge disposable cells</b> in a multi-chemistry pack</li>
+          <li>Wrote embedded C++ on the <b>nRF52832</b> for Bluetooth communication with phones</li>
+        </ul>
+        <div class="xp-media">
+          <figure class="shot">
+            <img src="images/lowlight_bms.jpg" alt="Battery management PCB" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>BMS board render or photo<code>images/lowlight_bms.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="xp-when">May – Aug 2026</div>
+      <div>
+        <h3>Quantum Research Assistant</h3>
+        <div class="org">Photonics &amp; Quantum Electronics Group, Prof. Karan Mehta · Cornell</div>
+        <ul>
+          <li>Built a Python/Tkinter GUI that uses <b>SPGD</b> to optimize optical-fiber coupling into trapped-ion quantum chips</li>
+          <li>Drove three NanoTrak stages, a linear stage, a power meter, and a polarization controller from one program</li>
+          <li>Automated waveguide-loss and grating-coupler beam-profile measurements: <b>4–5 hours → 15 minutes</b></li>
+        </ul>
+        <div class="xp-media">
+          <figure class="shot contain">
+            <img src="images/quantum_focus_curve.png" alt="Autofocus sharpness curve, coarse and fine sweeps" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>Autofocus: coarse then fine z-sweep of image sharpness</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="images/quantum_setup.jpg" alt="Optical alignment setup" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>The optical bench / GUI screenshot<code>images/quantum_setup.jpg</code></div>
+          </figure>
+        </div>
+        <details class="code">
+        <summary><span class="file">&lt;/&gt; <b>dual_align.py (lab code, not public)</b></span></summary>
+        <pre><code class="language-python">def _spgd(self, panel, pos, label, alpha=None, gain=None):
+    """
+    Two-sided normalised SPGD. Each iteration:
+      1. Random Bernoulli +/-1 perturbation (dx, dy)
+      2. Measure P+ at (x + a*dx, y + a*dy) and P- at (x - a*dx, y - a*dy)
+      3. Normalised gradient: g = (P+ - P-) / (P+ + P- + eps)  in [-1, 1]
+         (dividing by total power makes the gain power-independent)
+      4. Update: x += gain*g*dx,  y += gain*g*dy
+    Coupling-loss guard: if P+ + P- falls below a fraction of the best
+    power seen, both probes landed in the noise floor, so revert to the
+    best known position and re-probe from there.
+    """
+    # Start with the full alpha/gain, anneal to 30% by the last iteration
+    DECAY_FLOOR = 0.3
+    decay_rate = DECAY_FLOOR ** (1.0 / max(1, iters - 1))
+    for i in range(iters):
+        dx, dy = random.choice([-1, 1]), random.choice([-1, 1])
+        xp, yp = clamp_x(x + alpha * dx), clamp_y(y + alpha * dy)
+        # ...</code></pre>
+      </details>
+      </div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="xp-when">Oct 2025 – now</div>
+      <div>
+        <h3>Autonomy &amp; Electrical</h3>
+        <div class="org">Cornell Electric Vehicles · 70-member project team</div>
+        <ul>
+          <li>Built the <b>Rust integration layer</b> that ties perception, localization, mapping, and planning together</li>
+          <li>Developed the C++ pose-graph SLAM backend (see <a href="#projects">U4</a>) and now the FPGA accelerator (<a href="#projects">U1</a>)</li>
+          <li>Wrote RP2040 C++ firmware that turns UART commands into <b>PWM</b> for motor and steering control</li>
+          <li>Designed a 2-layer, 6-I/O <b>CAN dashboard PCB</b> in Altium and a reusable <b>60 V-input buck converter</b>; brought boards up with scopes and DMMs</li>
+        </ul>
+        <div class="xp-media">
+          <figure class="shot">
+            <img src="images/slam_desk.jpg" alt="Workbench with laptop running the SLAM stack" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>SLAM bring-up on the bench</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="images/cev_can_dashboard.jpg" alt="CAN dashboard PCB" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>CAN dashboard PCB<code>images/cev_can_dashboard.jpg</code></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="xp-when">Mar 2022 – Jun 2024</div>
+      <div>
+        <h3>R&amp;D Intern</h3>
+        <div class="org">Matter Motor Works · Ahmedabad, India</div>
+        <ul>
+          <li>Developed laser-welding parameters for copper-Hilumin battery busbars: <b>90% joint efficiency</b>, patent pending</li>
+          <li>Trained a <b>YOLOv8</b> weld-fault detector that cut in-line inspection time by <b>60%</b></li>
+        </ul>
+        <div class="xp-media">
+          <figure class="shot">
+            <img src="images/weld.jpg" alt="Laser-welded busbar on a battery cell" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>A laser-welded busbar joint</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="images/matter.jpg" alt="At Matter with the electric motorcycle" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>With Matter's electric motorcycle</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="xp-when">Apr 2026 – now</div>
+      <div>
+        <h3>VP of Internal Affairs</h3>
+        <div class="org">Kappa Theta Pi Technology Fraternity · Cornell</div>
+        <ul>
+          <li>Run internal operations for a <b>45-member</b> chapter: attendance, points, and event logistics</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<div class="section-wrap" id="about">
-  <div class="section-label">About</div>
-  <h2>Engineering at the edge.</h2>
-  <div class="about-grid">
-    <div class="about-text fade-up">
-      <p>I’m an Electrical and Computer Engineering student at Cornell with a passion for bridging the gap between hardware constraints and intelligent software.</p>
-      <p>Currently, I focus on SLAM, sensor fusion, and optimizing neural networks for edge deployment. I enjoy the challenge of making complex algorithms run efficiently on embedded systems.</p>
-      
-      <div class="skills-grid">
-        <div class="skill-tag">Verilog / RTL</div>
-        <div class="skill-tag">C++ / ROS2</div>
-        <div class="skill-tag">Python / PyTorch</div>
-        <div class="skill-tag">PCB Design</div>
-        <div class="skill-tag">NVIDIA Jetson</div>
-        <div class="skill-tag">LiDAR SLAM</div>
-      </div>
+<section id="toolbox">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Toolbox</h2></div>
+    <p class="sec-sub">What I reach for, roughly in order of how often.</p>
+    <div class="toolbox">
+      <div class="tool reveal"><h4>Digital &amp; FPGA</h4><div class="chips"><span>Verilog</span><span>SystemVerilog</span><span>RISC-V</span><span>AXI4-Stream</span><span>FSMs</span><span>Quartus</span><span>Vivado</span><span>Verilator</span><span>Icarus</span></div></div>
+      <div class="tool reveal"><h4>Verification &amp; debug</h4><div class="chips"><span>cocotb</span><span>Python golden models</span><span>unit + integration tests</span><span>oscilloscopes</span><span>multimeters</span></div></div>
+      <div class="tool reveal"><h4>Software</h4><div class="chips"><span>C++</span><span>Python</span><span>Rust</span><span>Bash</span><span>Linux</span><span>Git</span><span>CMake</span><span>ROS 2</span><span>Eigen</span><span>PyTorch Geometric</span><span>YOLOv8</span></div></div>
+      <div class="tool reveal"><h4>Hardware &amp; interfaces</h4><div class="chips"><span>Altium</span><span>SPICE</span><span>Inventor</span><span>UART</span><span>SPI</span><span>CAN</span><span>Ethernet</span><span>Bluetooth</span><span>PWM</span><span>RP2040</span></div></div>
     </div>
-    <img class="about-img fade-up" src="images/slam_desk.jpg" alt="Engineering Workspace" />
   </div>
-</div>
+</section>
 
-<div class="divider"></div>
-
-<div class="section-wrap" id="experience">
-  <div class="section-label">Experience</div>
-  <h2>Where I've worked</h2>
-  <div class="exp-list">
-    <div class="exp-item fade-up">
-      <div class="exp-date">Oct 2025 – Present</div>
-      <div class="exp-content">
-        <h3>Cornell Electric Vehicles</h3>
-        <div class="exp-company">Project Team · Ithaca, NY</div>
-        <ul>
-          <li>Built a custom SLAM pipeline for the self-driving perception stack</li>
-          <li>Designed 2 custom PCBs in Altium for strain gauge & RPM sensing</li>
-          <li>Developed embedded control on RP2040 with UART/WiFi comms</li>
-        </ul>
-        <img class="exp-img" src="images/slam_vis.jpg" alt="LiDAR Visualization" />
+<section id="contact">
+  <div class="wrap">
+    <div class="contact reveal">
+      <div>
+        <h2>Let's build something.</h2>
+        <p>Open to internships, research, and anyone who wants to argue about fixed-point formats.</p>
       </div>
-    </div>
-
-    <div class="exp-item fade-up">
-      <div class="exp-date">June 2024 – Aug 2024</div>
-      <div class="exp-content">
-        <h3>Matter Motor Works</h3>
-        <div class="exp-company">R&D Intern · Ahmedabad, India</div>
-        <ul>
-          <li>Optimized laser beam welding parameters for battery pack assembly</li>
-          <li>Achieved 90% joint efficiency for Copper-Hilumin busbar welds</li>
-          <li>Built CV system to detect weld faults in real-time</li>
-        </ul>
-        <img class="exp-img" src="images/matter.jpg" alt="Battery R&D" />
-      </div>
-    </div>
-
-    <div class="exp-item fade-up">
-      <div class="exp-date">Aug 2025 – Present</div>
-      <div class="exp-content">
-        <h3>Threads @ Cornell</h3>
-        <div class="exp-company">Software Engineer · Ithaca, NY</div>
-        <ul>
-          <li>Developing full-stack features for Cornell's primary social platform</li>
-          <li>Implementing high-performance discovery algorithms</li>
-        </ul>
-        <img class="exp-img" src="images/threads.jpg" alt="Threads Development" />
+      <div class="cta">
+        <a class="btn primary" href="mailto:idp7@cornell.edu">idp7@cornell.edu</a>
+        <a class="btn" href="https://github.com/IshaanParikh" target="_blank" rel="noopener">github</a>
+        <a class="btn" href="https://linkedin.com/in/Ishaan-Parikh10/" target="_blank" rel="noopener">linkedin</a>
       </div>
     </div>
   </div>
-</div>
-
-<div class="divider"></div>
-
-<div class="section-wrap" id="projects">
-  <div class="section-label">Projects</div>
-  <h2>Recent Builds</h2>
-  <p class="projects-note fade-up">A rotating showcase of builds and experiments. New projects land here as they ship — below are a few active ones, plus room for what's next.</p>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       ADDING A PROJECT: copy the block below, paste it above the
-       "PLACEHOLDER" comment, then replace the title, description,
-       tags, and image. Drop the image file into the images/ folder
-       and point src at it (e.g. src="images/my_project.jpg").
-       Delete placeholder cards once real ones replace them.
-  ═══════════════════════════════════════════════════════════════
-  <div class="project-card fade-up">
-    <img src="images/my_project.jpg" alt="My Project" />
-    <div class="project-body">
-      <h3>My Project Name</h3>
-      <p>One or two sentences: what it does, how it works, what it achieved.</p>
-      <div class="project-tags">
-        <span>Python</span><span>Embedded</span><span>PCB</span>
-      </div>
-    </div>
-  </div>
-  ════════════════════════════════════════════════════════════════ -->
-
-  <div class="projects-grid">
-
-    <!-- Project: Automated Weld Fault Detection -->
-    <div class="project-card fade-up">
-      <img src="images/weld.jpg" alt="Weld Detection" />
-      <div class="project-body">
-        <h3>Automated Weld Fault Detection</h3>
-        <p>A computer vision pipeline using YOLOv8 to identify micro-defects in laser welds.</p>
-        <div class="project-tags">
-          <span>Python</span><span>OpenCV</span><span>PyTorch</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Project: Bone Fracture X-ray Analysis -->
-    <div class="project-card fade-up">
-      <img src="images/xray.jpg" alt="X-ray Analysis" />
-      <div class="project-body">
-        <h3>Bone Fracture X-ray Analysis</h3>
-        <p>Deep learning model for multi-class classification of pediatric bone fractures.</p>
-        <div class="project-tags">
-          <span>CNN</span><span>Medical Imaging</span><span>PyTorch</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Project: GNN for Chemistry -->
-    <div class="project-card fade-up">
-      <img src="images/polymer.jpg" alt="GNN Polymer" />
-      <div class="project-body">
-        <h3>Graph Neural Networks for Chemistry</h3>
-        <p>Using GNNs to predict glass transition temperatures of complex polymers.</p>
-        <div class="project-tags">
-          <span>GNN</span><span>Materials Science</span><span>LAMMPS</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- PLACEHOLDER cards: replace or delete as real projects are added -->
-    <div class="project-card placeholder fade-up">
-      <div class="project-img-placeholder">image coming soon</div>
-      <div class="project-body">
-        <span class="coming-soon">in progress</span>
-        <h3>Project Title</h3>
-        <p>A short description of this build — what it does, how it works, what it achieved.</p>
-        <div class="project-tags">
-          <span>Tag 1</span><span>Tag 2</span><span>Tag 3</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card placeholder fade-up">
-      <div class="project-img-placeholder">image coming soon</div>
-      <div class="project-body">
-        <span class="coming-soon">in progress</span>
-        <h3>Project Title</h3>
-        <p>A short description of this build — what it does, how it works, what it achieved.</p>
-        <div class="project-tags">
-          <span>Tag 1</span><span>Tag 2</span><span>Tag 3</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="project-card placeholder fade-up">
-      <div class="project-img-placeholder">image coming soon</div>
-      <div class="project-body">
-        <span class="coming-soon">in progress</span>
-        <h3>Project Title</h3>
-        <p>A short description of this build — what it does, how it works, what it achieved.</p>
-        <div class="project-tags">
-          <span>Tag 1</span><span>Tag 2</span><span>Tag 3</span>
-        </div>
-      </div>
-    </div>
-    <!-- END placeholders -->
-
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<div class="section-wrap" id="research">
-  <div class="section-label">Research</div>
-  <h2>Academic Inquiry</h2>
-  <div class="research-list">
-    <div class="research-card fade-up">
-      <img src="images/quantum.jpg" alt="Quantum Research" />
-      <div class="research-body">
-        <h3>Quantum Neural Networks</h3>
-        <div class="mentor">Prof. Peter McMahon · McMahon Lab</div>
-        <div class="date">Expected Fall 2026</div>
-        <p>Exploring the application of Variational Quantum Circuits (VQCs) for high-dimensional data classification and mapping.</p>
-      </div>
-    </div>
-
-    <div class="research-card fade-up">
-      <img src="images/li_ion.jpg" alt="Battery Research" />
-      <div class="research-body">
-        <h3>Polymer Property Prediction</h3>
-        <div class="mentor">Independent Study</div>
-        <div class="date">Jan 2025 – Present</div>
-        <p>Developing machine learning models to accelerate the discovery of high-performance electrolytes for Li-ion batteries.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<div class="section-wrap">
-  <div class="section-label">Recognition</div>
-  <h2>Awards & Leadership</h2>
-  <div class="awards-strip">
-    <div class="award-pill">High School Valedictorian</div>
-    <div class="award-pill">Crest Gold Award — Exceptional Research</div>
-    <div class="award-pill">AMC 12 — 1st in School · AIME Qualifier</div>
-    <div class="award-pill">Patent — 90% Joint Efficiency Cu-Hilumin Laser Welds</div>
-    <div class="award-pill">Kappa Theta Pi Professional Tech Fraternity</div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<div class="section-wrap" id="contact">
-  <div class="section-label">Contact</div>
-  <h2>Let's connect</h2>
-  <p>Open to research collaborations, internships, and interesting conversations.</p>
-  <div class="contact-links">
-    <a href="mailto:idp7@cornell.edu" class="btn btn-primary">idp7@cornell.edu</a>
-    <a href="#" class="btn btn-ghost">LinkedIn</a>
-    <a href="https://github.com/IshaanParikh" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
-  </div>
-</div>
+</section>
 
 <footer>
-  <span>© 2026 Ishaan Parikh</span>
-  <span>ECE · Cornell University · Ithaca, NY</span>
+  <div class="wrap">
+    <span>© 2026 Ishaan Parikh · Ithaca, NY</span>
+    <span>hand-written HTML, no framework · <a href="#top">back to top ↑</a></span>
+  </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/verilog.min.js"></script>
 <script>
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
-  });
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-</script>
+  if (window.hljs) hljs.highlightAll();
 
+  // Image slots whose file failed before this script ran
+  document.querySelectorAll('.shot img').forEach(img => {
+    if (img.complete && img.naturalWidth === 0) img.parentElement.classList.add('empty');
+  });
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
 </body>
 </html>
