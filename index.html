@@ -159,6 +159,13 @@
     .shot.empty .slot strong { color: var(--accent); font-weight: 500; font-size: .8rem; letter-spacing: .04em; }
     .shot.empty .slot code { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; color: var(--ink); }
 
+    /* full-width simulation waveform under a project */
+    .wave { margin: 0; border-top: 1px solid var(--line); background: var(--paper); }
+    .wave a { display: block; overflow-x: auto; }
+    .wave img { width: 100%; min-width: 640px; }
+    .wave figcaption { font-family: var(--mono); font-size: .74rem; color: var(--muted); padding: 10px 30px; background: var(--card); border-top: 1px solid var(--line); }
+    .wave figcaption b { color: var(--accent); font-weight: 500; }
+
     /* code proof */
     details.code { border-top: 1px solid var(--line); }
     details.code summary {
@@ -333,6 +340,10 @@
           </figure>
         </div>
       </div>
+      <figure class="wave">
+        <a href="images/cnn_winograd_waveform.png" target="_blank" rel="noopener"><img src="images/cnn_winograd_waveform.png" alt="Winograd unit simulation waveform" loading="lazy" /></a>
+        <figcaption><b>Simulation waveform</b> · first 12 test vectors: the RTL outputs track the direct-convolution reference on every vector (click to enlarge)</figcaption>
+      </figure>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>mnist/rtl/winograd_3x3_conv.sv</b></span></summary>
         <pre><code class="language-verilog">module winograd_3x3_conv
@@ -404,6 +415,10 @@ endmodule</code></pre>
           </figure>
         </div>
       </div>
+      <figure class="wave">
+        <a href="images/rrc_waveform.png" target="_blank" rel="noopener"><img src="images/rrc_waveform.png" alt="RRC filter AXI4-Stream simulation waveform" loading="lazy" /></a>
+        <figcaption><b>Simulation waveform</b> · 30 cycles of random stalls and gaps: the delay line only moves on real samples, the output still drains on every ready (click to enlarge)</figcaption>
+      </figure>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>rtl/booth_mult_r4.v</b></span></summary>
         <pre><code class="language-verilog">// S1: register operands, precompute the 4 multiples once
@@ -451,11 +466,15 @@ end</code></pre>
         </div>
         <div class="project-media">
           <figure class="shot">
-            <img src="images/itch_waveform.jpg" alt="ITCH decoder simulation waveform" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>Waveform screenshot or block diagram<code>images/itch_waveform.jpg</code></div>
+            <img src="images/itch_block_diagram.jpg" alt="ITCH feed handler block diagram" onerror="this.parentElement.classList.add('empty')" />
+            <div class="slot"><strong>PHOTO SLOT</strong>Block diagram or FPGA board<code>images/itch_block_diagram.jpg</code></div>
           </figure>
         </div>
       </div>
+      <figure class="wave">
+        <a href="images/itch_waveform.png" target="_blank" rel="noopener"><img src="images/itch_waveform.png" alt="ITCH decoder and order book simulation waveform" loading="lazy" /></a>
+        <figcaption><b>Simulation waveform</b> · one 36-byte add-order frame walks the FSM through LEN_HI, LEN_LO, BODY, DECODE, then the book posts the new best bid (click to enlarge)</figcaption>
+      </figure>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>rtl/decode/itch_decode.sv</b></span></summary>
         <pre><code class="language-verilog">typedef enum logic [1:0] { ST_LEN_HI, ST_LEN_LO, ST_BODY, ST_DECODE } state_e;

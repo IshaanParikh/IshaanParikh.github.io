@@ -11,9 +11,9 @@ Landscape photos (roughly 4:3 or 16:9, about 1200-1600 px wide, JPEG) look best.
 
 | File | What goes there |
 |---|---|
-| `cnn_accelerator.jpg` | FPGA board or simulation waveform for the CNN accelerator |
+| `cnn_accelerator.jpg` | FPGA board photo for the CNN accelerator |
 | `rrc_fpga_board.jpg` | Cyclone IV board running the RRC filter |
-| `itch_waveform.jpg` | ITCH decoder waveform screenshot or block diagram |
+| `itch_block_diagram.jpg` | ITCH feed handler block diagram or FPGA board |
 | `slam_car.jpg` | The CEV car / LiDAR sensor rig |
 | `tils.jpg` | Tils compare screen (card is hidden for now) |
 | `lowlight_bms.jpg` | Low Light Innovations BMS board render or photo |
@@ -25,6 +25,9 @@ Landscape photos (roughly 4:3 or 16:9, about 1200-1600 px wide, JPEG) look best.
 `headshot.jpg`, `rrc_constellation.jpg`, `rrc_eye.jpg` (from the rrc-matched-filter
 repo), `slam_vis.jpg`, `slam_desk.jpg`,
 `polymer.jpg`, `xray.jpg`, `quantum_focus_curve.png`, `weld.jpg`, `matter.jpg`.
+
+Simulation waveforms (rendered from the testbenches' VCD dumps):
+`cnn_winograd_waveform.png`, `rrc_waveform.png`, `itch_waveform.png`.
 
 To swap one, overwrite the file with the same name.
 
