@@ -149,6 +149,7 @@
     /* Image slots: drop a file at the src path and it shows up; until then a dashed placeholder shows. */
     .shot { position: relative; margin: 0; background: var(--paper); min-height: 220px; display: flex; flex-direction: column; }
     .shot img { width: 100%; height: 100%; object-fit: cover; flex: 1; }
+    .shot video { width: 100%; display: block; background: #000; aspect-ratio: 73 / 54; object-fit: cover; }
     .shot.contain img { object-fit: contain; background: #fff; padding: 10px; }
     .shot figcaption { font-family: var(--mono); font-size: .72rem; color: var(--muted); padding: 8px 14px; background: var(--card); border-top: 1px solid var(--line); }
     .shot .slot { display: none; }
@@ -751,6 +752,10 @@ export function listScores(list) {
           <li>Automated waveguide-loss and grating-coupler beam-profile measurements: <b>4–5 hours → 15 minutes</b></li>
         </ul>
         <div class="xp-media">
+          <figure class="shot">
+            <video src="images/waveguide_alignment.mp4" poster="images/waveguide_alignment_poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Top-view camera footage of fiber-to-waveguide alignment on a loss test structure"></video>
+            <figcaption>Live alignment, top view of the loss structures (fluorescence camera, 4× speed)</figcaption>
+          </figure>
           <figure class="shot contain">
             <img src="images/quantum_focus_curve.png" alt="Autofocus sharpness curve, coarse and fine sweeps" onerror="this.parentElement.classList.add('empty')" />
             <figcaption>Autofocus: coarse then fine z-sweep of image sharpness</figcaption>
