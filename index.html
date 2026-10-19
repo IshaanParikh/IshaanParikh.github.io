@@ -141,6 +141,9 @@
     .links .private { color: var(--faint); }
     .note { font-size: .85rem !important; font-style: italic; }
 
+    /* cards with no picture: one column, readable line length */
+    .project-top:not(:has(.project-media)) { grid-template-columns: 1fr; }
+    .project-top:not(:has(.project-media)) .project-info > * { max-width: 780px; }
     .project-media { background: var(--paper); border-left: 1px solid var(--line); display: grid; gap: 1px; align-content: stretch; }
 
     /* Image slots: drop a file at the src path and it shows up; until then a dashed placeholder shows. */
@@ -194,7 +197,7 @@
     .xp-media { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 6px; }
     .xp-media .shot { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-height: 200px; }
     .xp-media .shot img { aspect-ratio: 4 / 3; }
-    .xp-media .shot.contain img { aspect-ratio: auto; }
+    .xp-media .shot.contain img { aspect-ratio: auto; max-height: 340px; }
     .xp details.code { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-top: 12px; }
     .xp details.code summary { padding: 10px 18px; }
     .xp pre code.hljs { padding: 16px 18px; }
@@ -333,12 +336,6 @@
           <div class="chips"><span>Verilog</span><span>SystemVerilog</span><span>Python</span><span>INT8 quantization</span><span>Winograd</span></div>
           <div class="links"><a href="https://github.com/cornellev/cnn-accelerator" target="_blank" rel="noopener">cornellev/cnn-accelerator ↗</a><a href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/rtl/winograd_3x3_conv.sv" target="_blank" rel="noopener">winograd_3x3_conv.sv ↗</a></div>
         </div>
-        <div class="project-media">
-          <figure class="shot">
-            <img src="images/cnn_accelerator.jpg" alt="FPGA CNN accelerator" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>FPGA board or simulation waveform<code>images/cnn_accelerator.jpg</code></div>
-          </figure>
-        </div>
       </div>
       <figure class="wave">
         <a href="images/cnn_winograd_waveform.png" target="_blank" rel="noopener"><img src="images/cnn_winograd_waveform.png" alt="Winograd unit simulation waveform" loading="lazy" /></a>
@@ -409,10 +406,6 @@ endmodule</code></pre>
             <img src="images/rrc_eye.jpg" alt="Eye diagram of the filtered signal" onerror="this.parentElement.classList.add('empty')" />
             <figcaption>Eye diagram on a clean channel: open at the sampling instant (zero ISI)</figcaption>
           </figure>
-          <figure class="shot">
-            <img src="images/rrc_fpga_board.jpg" alt="RRC filter running on the Cyclone IV board" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>Cyclone IV board running the filter<code>images/rrc_fpga_board.jpg</code></div>
-          </figure>
         </div>
       </div>
       <figure class="wave">
@@ -463,12 +456,6 @@ end</code></pre>
           </ul>
           <div class="chips"><span>SystemVerilog</span><span>cocotb</span><span>Verilator</span><span>Python</span><span>Vivado</span></div>
           <div class="links"><a href="https://github.com/IshaanParikh/FPGA-market-maker" target="_blank" rel="noopener">IshaanParikh/FPGA-market-maker ↗</a></div>
-        </div>
-        <div class="project-media">
-          <figure class="shot">
-            <img src="images/itch_block_diagram.jpg" alt="ITCH feed handler block diagram" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>Block diagram or FPGA board<code>images/itch_block_diagram.jpg</code></div>
-          </figure>
         </div>
       </div>
       <figure class="wave">
@@ -536,10 +523,6 @@ always_ff @(posedge clk) begin
           <figure class="shot">
             <img src="images/slam_vis.jpg" alt="LiDAR point cloud and pose graph in RViz" onerror="this.parentElement.classList.add('empty')" />
             <figcaption>LiDAR map and pose estimates in RViz</figcaption>
-          </figure>
-          <figure class="shot">
-            <img src="images/slam_car.jpg" alt="CEV car with the LiDAR mounted" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>The car / sensor rig<code>images/slam_car.jpg</code></div>
           </figure>
         </div>
       </div>
@@ -689,12 +672,6 @@ predictions = np.mean(predictions, axis=0)   # ...then across images per study</
           <!-- TODO(Ishaan): once the repo is public or deployed, swap this for a real link. -->
           <div class="links"><span class="private">repo private for now</span></div>
         </div>
-        <div class="project-media">
-          <figure class="shot">
-            <img src="images/tils.jpg" alt="Tils compare screen" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>Screenshot of the Compare screen<code>images/tils.jpg</code></div>
-          </figure>
-        </div>
       </div>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>src/core.js</b></span></summary>
@@ -760,12 +737,6 @@ export function listScores(list) {
           <li>Implemented a firmware safety interlock that <b>refuses to charge disposable cells</b> in a multi-chemistry pack</li>
           <li>Wrote embedded C++ on the <b>nRF52832</b> for Bluetooth communication with phones</li>
         </ul>
-        <div class="xp-media">
-          <figure class="shot">
-            <img src="images/lowlight_bms.jpg" alt="Battery management PCB" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>BMS board render or photo<code>images/lowlight_bms.jpg</code></div>
-          </figure>
-        </div>
       </div>
     </div>
 
@@ -783,10 +754,6 @@ export function listScores(list) {
           <figure class="shot contain">
             <img src="images/quantum_focus_curve.png" alt="Autofocus sharpness curve, coarse and fine sweeps" onerror="this.parentElement.classList.add('empty')" />
             <figcaption>Autofocus: coarse then fine z-sweep of image sharpness</figcaption>
-          </figure>
-          <figure class="shot">
-            <img src="images/quantum_setup.jpg" alt="Optical alignment setup" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>The optical bench / GUI screenshot<code>images/quantum_setup.jpg</code></div>
           </figure>
         </div>
         <details class="code">
@@ -829,10 +796,6 @@ export function listScores(list) {
           <figure class="shot">
             <img src="images/slam_desk.jpg" alt="Workbench with laptop running the SLAM stack" onerror="this.parentElement.classList.add('empty')" />
             <figcaption>SLAM bring-up on the bench</figcaption>
-          </figure>
-          <figure class="shot">
-            <img src="images/cev_can_dashboard.jpg" alt="CAN dashboard PCB" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>CAN dashboard PCB<code>images/cev_can_dashboard.jpg</code></div>
           </figure>
         </div>
       </div>
