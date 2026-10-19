@@ -778,7 +778,7 @@ export function listScores(list) {
         <div class="xp-media">
           <figure class="shot">
             <div class="player">
-              <video src="images/waveguide_alignment.mp4" poster="images/waveguide_alignment_poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Top-view camera footage of fiber-to-waveguide alignment on a loss test structure"></video>
+              <video src="images/waveguide_alignment_v2.mp4" poster="images/waveguide_alignment_v2_poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Top-view camera footage of fiber-to-waveguide alignment on a loss test structure"></video>
               <div class="bar">
                 <button type="button" class="pp" aria-label="Pause">❚❚</button>
                 <input class="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" />
@@ -946,11 +946,17 @@ export function listScores(list) {
       time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
     };
     v.addEventListener('loadedmetadata', () => { setRate(4); show(); });
-    v.addEventListener('timeupdate', () => {
+    // timeupdate only fires ~4x a second, which lags badly at 8x, so
+    // redraw every animation frame while playing
+    const tick = () => {
       show();
       if (!scrubbing && v.currentTime < last - 1) { loop.classList.remove('pulse'); void loop.offsetWidth; loop.classList.add('pulse'); }
       last = v.currentTime;
-    });
+      if (!v.paused) requestAnimationFrame(tick);
+    };
+    v.addEventListener('play', () => requestAnimationFrame(tick));
+    v.addEventListener('timeupdate', show);
+    v.addEventListener('seeked', show);
     v.addEventListener('play', sync); v.addEventListener('pause', sync);
     pp.addEventListener('click', () => v.paused ? v.play() : v.pause());
     v.addEventListener('click', () => v.paused ? v.play() : v.pause());
@@ -962,6 +968,7 @@ export function listScores(list) {
     seek.addEventListener('change', () => { scrubbing = false; if (wasPlaying) v.play(); wasPlaying = false; });
     if (v.readyState >= 1) { setRate(4); show(); }
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.pause();
+    if (!v.paused) requestAnimationFrame(tick);
     sync();
   });
 
