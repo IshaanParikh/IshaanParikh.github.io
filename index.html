@@ -150,6 +150,27 @@
     .shot { position: relative; margin: 0; background: var(--paper); min-height: 220px; display: flex; flex-direction: column; }
     .shot img { width: 100%; height: 100%; object-fit: cover; flex: 1; }
     .shot video { width: 100%; display: block; background: #000; aspect-ratio: 73 / 54; object-fit: cover; }
+    /* looping video player: play/pause, progress, loop badge */
+    .player { position: relative; background: #000; }
+    .player .bar {
+      position: absolute; left: 10px; right: 10px; bottom: 10px;
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(28,29,32,.78); backdrop-filter: blur(6px);
+      border-radius: 8px; padding: 6px 10px; color: #fff;
+      font-family: var(--mono); font-size: .72rem;
+    }
+    .player button {
+      all: unset; cursor: pointer; width: 22px; height: 22px; display: grid; place-items: center;
+      border-radius: 50%; background: #fff; color: var(--ink); font-size: .66rem; flex: none;
+    }
+    .player button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .player .track { flex: 1; height: 4px; background: rgba(255,255,255,.25); border-radius: 2px; overflow: hidden; cursor: pointer; }
+    .player .fill { height: 100%; width: 0; background: var(--accent); }
+    .player .time { white-space: nowrap; opacity: .85; }
+    .player .loop { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 999px; background: var(--accent); white-space: nowrap; }
+    .player .loop i { display: inline-block; font-style: normal; }
+    .player .loop.pulse i { animation: spin .6s ease-out; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .shot.contain img { object-fit: contain; background: #fff; padding: 10px; }
     .shot figcaption { font-family: var(--mono); font-size: .72rem; color: var(--muted); padding: 8px 14px; background: var(--card); border-top: 1px solid var(--line); }
     .shot .slot { display: none; }
@@ -753,7 +774,15 @@ export function listScores(list) {
         </ul>
         <div class="xp-media">
           <figure class="shot">
-            <video src="images/waveguide_alignment.mp4" poster="images/waveguide_alignment_poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Top-view camera footage of fiber-to-waveguide alignment on a loss test structure"></video>
+            <div class="player">
+              <video src="images/waveguide_alignment.mp4" poster="images/waveguide_alignment_poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Top-view camera footage of fiber-to-waveguide alignment on a loss test structure"></video>
+              <div class="bar">
+                <button type="button" aria-label="Pause">❚❚</button>
+                <div class="track" title="Seek"><div class="fill"></div></div>
+                <span class="time">0:00 / 0:30</span>
+                <span class="loop" title="Plays on a loop"><i>↻</i> loop · 4×</span>
+              </div>
+            </div>
             <figcaption>Live alignment, top view of the loss structures (fluorescence camera, 4× speed)</figcaption>
           </figure>
           <figure class="shot contain">
@@ -885,6 +914,36 @@ export function listScores(list) {
   // Image slots whose file failed before this script ran
   document.querySelectorAll('.shot img').forEach(img => {
     if (img.complete && img.naturalWidth === 0) img.parentElement.classList.add('empty');
+  });
+
+  // looping video players
+  document.querySelectorAll('.player').forEach(p => {
+    const v = p.querySelector('video'), btn = p.querySelector('button'),
+          fill = p.querySelector('.fill'), time = p.querySelector('.time'),
+          track = p.querySelector('.track'), loop = p.querySelector('.loop');
+    const fmt = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+    let last = 0;
+    const sync = () => {
+      btn.textContent = v.paused ? '▶' : '❚❚';
+      btn.setAttribute('aria-label', v.paused ? 'Play' : 'Pause');
+    };
+    v.addEventListener('timeupdate', () => {
+      if (v.duration) {
+        fill.style.width = (100 * v.currentTime / v.duration) + '%';
+        time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
+      }
+      if (v.currentTime < last - 1) { loop.classList.remove('pulse'); void loop.offsetWidth; loop.classList.add('pulse'); }
+      last = v.currentTime;
+    });
+    v.addEventListener('play', sync); v.addEventListener('pause', sync);
+    btn.addEventListener('click', () => v.paused ? v.play() : v.pause());
+    v.addEventListener('click', () => v.paused ? v.play() : v.pause());
+    track.addEventListener('click', e => {
+      const r = track.getBoundingClientRect();
+      if (v.duration) v.currentTime = v.duration * (e.clientX - r.left) / r.width;
+    });
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.pause();
+    sync();
   });
 
   const io = new IntersectionObserver(entries => {
