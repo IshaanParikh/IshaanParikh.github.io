@@ -530,21 +530,26 @@ always_ff @(posedge clk) begin
       <div class="project-top">
         <div class="project-info">
           <div class="part"><span class="ref">U4</span>Robotics · Cornell Electric Vehicles · 2026</div>
-          <h3>Pose-Graph SLAM with a Sliding Window</h3>
-          <p>The localization backend for CEV's autonomous car: a C++ pose-graph optimizer on ROS 2 that fuses LiDAR odometry and IMU. The sliding-window version keeps only the last 20 keyframes, so solve time stays flat no matter how long the car drives.</p>
+          <h3>Sliding-Window Pose-Graph SLAM</h3>
+          <p>The localization backend for CEV's autonomous car. It takes fused LiDAR + IMU odometry and LiDAR scans, optimizes a pose graph over the last 20 keyframes, and publishes the drift correction as <code>map → odom</code>. Old keyframes aren't deleted: they're marginalized into a prior, and then kept in an archive for loop closure, so cost per keyframe stays flat however long the car drives.</p>
           <ul class="proof">
-            <li>Gauss-Newton on a sparse information matrix with Eigen's <b>SimplicialLDLT</b>, 5 iterations per keyframe</li>
-            <li>New keyframe every <b>0.3 m</b> or <b>~15°</b>; oldest pose marginalized out past <b>20</b></li>
-            <li>Fixed a subtle bug where edges used a global-frame delta as the measurement, so the optimizer fought the odometry</li>
-            <li>SLAM running at <b>30 Hz</b> on 3D LiDAR + IMU input</li>
+            <li>In a 2-lap (~115 m) simulation with drifting odometry, trajectory error drops from <b>3.09 m</b> (raw odometry) to <b>0.12 m</b>, about 25× less</li>
+            <li>Real marginalization via the <b>Schur complement</b>: within <b>0.2 mm</b> of the full-batch solution, vs. <b>0.19 m</b> for the old drop-and-pin approach</li>
+            <li>Every keyframe gets ICP scan-matching edges inside the window plus <b>loop-closure</b> edges to the archive, each verified independently (≥ 60% inliers within 15 cm)</li>
+            <li>Levenberg–Marquardt with a <b>Huber</b> kernel for bad matches; about <b>2 ms per keyframe</b> from the first lap to the last</li>
+            <li>Fixed a real SE(2) bug in <code>map → odom</code> (component subtraction was <b>0.94 m</b> off at 90° heading) and timed keyframes to scan stamps with interpolated odometry</li>
           </ul>
-          <div class="chips"><span>C++</span><span>ROS 2</span><span>Eigen</span><span>LiDAR</span><span>IMU</span></div>
+          <div class="chips"><span>C++17</span><span>ROS 2</span><span>Eigen</span><span>ICP</span><span>LiDAR</span><span>IMU</span></div>
           <div class="links">
             <a href="https://github.com/cornellev/SLAM-sliding-window" target="_blank" rel="noopener">cornellev/SLAM-sliding-window ↗</a>
             <a href="https://github.com/cornellev/SLAMv2" target="_blank" rel="noopener">cornellev/SLAMv2 ↗</a>
           </div>
         </div>
         <div class="project-media">
+          <figure class="shot contain">
+            <img src="images/slam_sim_result.svg" alt="Simulated trajectories: ground truth, raw odometry, old backend, and the new sliding-window backend" onerror="this.parentElement.classList.add('empty')" />
+            <figcaption>2-lap simulation: green (new, marginalization + loop closure) tracks ground truth; red is raw odometry</figcaption>
+          </figure>
           <figure class="shot">
             <img src="images/slam_vis.jpg" alt="LiDAR point cloud and pose graph in RViz" onerror="this.parentElement.classList.add('empty')" />
             <figcaption>LiDAR map and pose estimates in RViz</figcaption>
@@ -552,28 +557,37 @@ always_ff @(posedge clk) begin
         </div>
       </div>
       <details class="code">
-        <summary><span class="file">&lt;/&gt; <b>src/cev_pose_graph_slam/src/SLAM_backend_math.cpp</b></span></summary>
-        <pre><code class="language-cpp">static constexpr int WINDOW_SIZE = 20;
-
-void marginalize() {
-    // Remove the sequential edge (0,1), the only edge incident to local index 0
-    W_edges_.erase(std::remove_if(W_edges_.begin(), W_edges_.end(),
-        [](const Edge2&amp; e){ return e.i == 0 || e.j == 0; }), W_edges_.end());
-    W_.pop_front();                              // drop oldest pose
-    for (auto&amp; e : W_edges_) { e.i--; e.j--; }   // shift window-local indices
+        <summary><span class="file">&lt;/&gt; <b>src/cev_pose_graph_slam/src/sliding_window_pgo.cpp</b></span></summary>
+        <pre><code class="language-cpp">void SlidingWindowPGO::marginalizeOldest() {
+    const int m = window_.front().id;
+    // Markov blanket of m: everything sharing a factor with it. The current
+    // prior is always folded in, so there is only ever one prior factor.
+    ...
+    // Build H, b over [m, blanket] at the current estimate (Huber-weighted)
+    ...
+    // Schur complement: eliminate m, keep the information it carried
+    // about its neighbours.
+    LinearPrior next;
+    if (K &gt; 1) {
+        const int n = 3 * (K - 1);
+        Eigen::Matrix3d Hmm = H.topLeftCorner&lt;3, 3&gt;();
+        Eigen::MatrixXd Hmr = H.topRightCorner(3, n);
+        Eigen::LDLT&lt;Eigen::Matrix3d&gt; Hmm_ldlt(Hmm);
+        next.ids.assign(ids.begin() + 1, ids.end());
+        next.H = H.bottomRightCorner(n, n) - Hmr.transpose() * Hmm_ldlt.solve(Hmr);
+        next.H = 0.5 * (next.H + next.H.transpose());
+        next.g = b.tail(n) - Hmr.transpose() * Hmm_ldlt.solve(Eigen::Vector3d(b.head&lt;3&gt;()));
+        ...
+    }
+    prior_ = std::move(next);
+    archive_.push_back(std::move(window_.front()));   // kept for loop closure
+    window_.pop_front();
 }
 
-// in odom_callback: new keyframe every 0.3 m or ~15 degrees
-if (travel_dist &gt; 0.3 || rotation_dist &gt; 0.26) {
-    double c = std::cos(last.th), s = std::sin(last.th);
-    // measurement in the previous pose's body frame
-    Eigen::Vector3d z(c*dx + s*dy, -s*dx + c*dy, wrapAngle(cur_th - last.th));
-    W_.push_back({cur_x, cur_y, cur_th});
-    W_edges_.push_back({(int)W_.size()-2, (int)W_.size()-1, z, info});
-
-    if ((int)W_.size() &gt; WINDOW_SIZE) marginalize();   // slide the window
-    for (int it = 0; it &lt; 5; ++it)
-        gaussNewtonStep(W_, W_edges_, 1e-6);           // sparse H, SimplicialLDLT
+void SlidingWindowPGO::updateMapToOdom() {
+    // T_map_odom = T_map_base * T_odom_base^-1, evaluated at the newest keyframe.
+    const Keyframe&amp; kf = window_.back();
+    map_to_odom_ = compose(kf.est, inverse(kf.odom));
 }</code></pre>
       </details>
     </article>
