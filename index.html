@@ -194,6 +194,18 @@
     .wave figcaption { font-family: var(--mono); font-size: .74rem; color: var(--muted); padding: 10px 30px; background: var(--card); border-top: 1px solid var(--line); }
     .wave figcaption b { color: var(--accent); font-weight: 500; }
 
+    /* PCB: 3D board viewer + tabbed schematic sheets */
+    .board3d model-viewer { width: 100%; flex: 1; min-height: 340px; background: radial-gradient(circle at 50% 40%, #ffffff, #ebe7dc); --poster-color: transparent; }
+    .sch img { min-width: 0; background: #fff; }
+    .sch a { overflow: visible; }
+    .sch-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 30px; background: var(--card); border-bottom: 1px solid var(--line); }
+    .sch-tabs button {
+      font-family: var(--mono); font-size: .74rem; cursor: pointer;
+      border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; background: var(--paper); color: var(--muted);
+    }
+    .sch-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+    @media (max-width: 520px) { .sch-tabs { padding: 10px 18px; } }
+
     /* code proof */
     details.code { border-top: 1px solid var(--line); }
     details.code summary {
@@ -594,11 +606,47 @@ void SlidingWindowPGO::updateMapToOdom() {
       </details>
     </article>
 
-    <!-- ─────────────── U5: Polymer GNN ─────────────── -->
+    <!-- ─────────────── U5: CEV dashboard PCB ─────────────── -->
     <article class="project reveal">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U5</span>ML · Materials · Jun – Aug 2025</div>
+          <div class="part"><span class="ref">U5</span>PCB · Cornell Electric Vehicles · Fall 2026</div>
+          <h3>CAN Dashboard PCB</h3>
+          <p>The car's dashboard board: it reads six driver inputs, talks to the rest of the car over CAN FD, and runs straight off the 60 V traction bus. An RP2040 does the thinking, an MCP251863 handles CAN, and a 75 V buck makes the 5 V rail. Designed in Altium on four layers for JLCPCB. Drag the model to spin it.</p>
+          <ul class="proof">
+            <li><b>60 V → 5 V</b> with a RAA211820 synchronous buck (75 V, 2 A), then an LDO to 3.3 V that's diode-OR'd with USB power</li>
+            <li>MCP251863 CAN FD controller + transceiver on SPI, with a <b>split 62 Ω</b> termination for the bus</li>
+            <li>Six Mini-Fit sensor inputs and the power/CAN connector flush with the board edges on a <b>114.3 × 66 mm</b>, 4-layer board</li>
+            <li>All <b>58 nets</b> routed with <b>0 DRC violations</b> against JLCPCB's 4-layer rules, including a <b>0.5 mm</b> clearance rule around the 60 V net</li>
+            <li>USB-C for flashing and power, with an RP2040 boot flash, 12 MHz crystal, and BOOTSEL/RUN buttons</li>
+          </ul>
+          <div class="chips"><span>Altium</span><span>RP2040</span><span>CAN FD</span><span>Buck converter</span><span>4-layer PCB</span></div>
+          <div class="links"><a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">schematic PDF ↗</a><a href="images/cev_dashboard.glb" download>3D model (.glb) ↓</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot board3d">
+            <model-viewer src="images/cev_dashboard.glb" alt="3D model of the CEV dashboard PCB" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05" orientation="0deg -90deg 0deg" camera-orbit="30deg 60deg 95%" loading="lazy" touch-action="pan-y"></model-viewer>
+            <figcaption>Interactive 3D model exported from Altium: drag to rotate, scroll to zoom</figcaption>
+          </figure>
+        </div>
+      </div>
+      <figure class="wave sch">
+        <div class="sch-tabs" role="tablist" aria-label="Schematic sheet">
+          <button type="button" role="tab" aria-selected="true" data-src="images/cev_sch_top.svg">top level</button>
+          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_mcu.svg">RP2040 + USB</button>
+          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_can.svg">CAN FD</button>
+          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_buck.svg">60 V buck</button>
+        </div>
+        <a href="images/cev_sch_top.svg" target="_blank" rel="noopener"><img src="images/cev_sch_top.svg" alt="CEV dashboard schematic, top-level sheet" loading="lazy" /></a>
+        <figcaption><b>Schematic</b> · pick a sheet above; click it to open full size, or grab the <a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">PDF</a></figcaption>
+      </figure>
+    </article>
+
+    <!-- ─────────────── U6: Polymer GNN ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U6</span>ML · Materials · Jun – Aug 2025</div>
           <h3>Polymer Property Prediction with GNNs</h3>
           <p>For the NeurIPS Open Polymer Challenge: predict five properties (glass transition temperature, free volume, crystallization temperature, density, radius of gyration) straight from a polymer's SMILES string. Molecules become graphs; a GCN learns from atoms and bonds.</p>
           <ul class="proof">
@@ -648,11 +696,11 @@ class GNNRegressor(nn.Module):
       </details>
     </article>
 
-    <!-- ─────────────── U6: X-ray ─────────────── -->
+    <!-- ─────────────── U7: X-ray ─────────────── -->
     <article class="project reveal">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U6</span>ML · Medical imaging · Kaggle</div>
+          <div class="part"><span class="ref">U7</span>ML · Medical imaging · Kaggle</div>
           <h3>Chest X-ray COVID-19 / Pneumonia Detection</h3>
           <p>A two-stage pipeline for the SIIM-COVID19 Kaggle competition. YOLOv5 finds and boxes lung opacities in each image; an ensemble of CNNs classifies the whole study as negative, typical, indeterminate, or atypical.</p>
           <ul class="proof">
@@ -697,11 +745,11 @@ predictions = np.mean(predictions, axis=0)   # ...then across images per study</
       </details>
     </article>
 
-    <!-- ─────────────── U7: Tils (HIDDEN: private for now; delete the "hidden" attribute to show it) ─────────────── -->
+    <!-- ─────────────── U8: Tils (HIDDEN: private for now; delete the "hidden" attribute to show it) ─────────────── -->
     <article class="project reveal" hidden>
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U7</span>Side project · Web · Fall 2026</div>
+          <div class="part"><span class="ref">U8</span>Side project · Web · Fall 2026</div>
           <h3>Tils: rank movies by gut</h3>
           <p>"List" backwards. Instead of star ratings, you answer <em>this or that?</em> and every pick updates both your personal ranking and a global Elo for the title. It's a browser prototype with a Wikidata-backed catalog.</p>
           <ul class="proof">
@@ -742,7 +790,7 @@ export function listScores(list) {
     <article class="project reveal">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U8</span>Category · Month Year – now</div>
+          <div class="part"><span class="ref">U9</span>Category · Month Year – now</div>
           <h3>Project name</h3>
           <p>What it is and why it's interesting, in two sentences.</p>
           <ul class="proof">
@@ -849,7 +897,7 @@ export function listScores(list) {
           <li>Built the <b>Rust integration layer</b> that ties perception, localization, mapping, and planning together</li>
           <li>Developed the C++ pose-graph SLAM backend (see <a href="#projects">U4</a>) and now the FPGA accelerator (<a href="#projects">U1</a>)</li>
           <li>Wrote RP2040 C++ firmware that turns UART commands into <b>PWM</b> for motor and steering control</li>
-          <li>Designed a 2-layer, 6-I/O <b>CAN dashboard PCB</b> in Altium and a reusable <b>60 V-input buck converter</b>; brought boards up with scopes and DMMs</li>
+          <li>Designed a 4-layer, 6-input <b>CAN dashboard PCB</b> in Altium (see <a href="#projects">U5</a>) and a reusable <b>60 V-input buck converter</b>; brought boards up with scopes and DMMs</li>
         </ul>
         <div class="xp-media">
           <figure class="shot">
@@ -931,6 +979,7 @@ export function listScores(list) {
   </div>
 </footer>
 
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/verilog.min.js"></script>
 <script>
@@ -986,6 +1035,16 @@ export function listScores(list) {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.pause();
     if (!v.paused) requestAnimationFrame(tick);
     sync();
+  });
+
+  // schematic sheet tabs
+  document.querySelectorAll('.sch').forEach(fig => {
+    const img = fig.querySelector('img'), link = img.parentElement, tabs = fig.querySelectorAll('.sch-tabs button');
+    tabs.forEach(b => b.addEventListener('click', () => {
+      tabs.forEach(t => t.setAttribute('aria-selected', String(t === b)));
+      img.src = link.href = b.dataset.src;
+      img.alt = 'CEV dashboard schematic, ' + b.textContent + ' sheet';
+    }));
   });
 
   const io = new IntersectionObserver(entries => {
