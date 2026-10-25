@@ -537,11 +537,51 @@ always_ff @(posedge clk) begin
       </details>
     </article>
 
-    <!-- ─────────────── U4: SLAM ─────────────── -->
+    <!-- ─────────────── U4: CEV dashboard PCB ─────────────── -->
     <article class="project reveal">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U4</span>Robotics · Cornell Electric Vehicles · 2026</div>
+          <div class="part"><span class="ref">U4</span>PCB · Cornell Electric Vehicles · Fall 2026</div>
+          <h3>CAN Dashboard PCB</h3>
+          <p>The car's dashboard board: it reads six driver inputs, talks to the rest of the car over CAN FD, and runs straight off the 60 V traction bus. An RP2040 does the thinking, an MCP251863 handles CAN, and a 75 V buck makes the 5 V rail. Designed in Altium on four layers for JLCPCB. Drag the model to spin it.</p>
+          <ul class="proof">
+            <li><b>60 V → 5 V</b> with a RAA211820 synchronous buck (75 V, 2 A), then an LDO to 3.3 V that's diode-OR'd with USB power</li>
+            <li>MCP251863 CAN FD controller + transceiver on SPI, with a <b>split 62 Ω</b> termination for the bus</li>
+            <li>Six Mini-Fit sensor inputs and the power/CAN connector flush with the board edges on a <b>114.3 × 66 mm</b>, 4-layer board</li>
+            <li>All <b>58 nets</b> routed with <b>0 DRC violations</b> against JLCPCB's 4-layer rules, including a <b>0.5 mm</b> clearance rule around the 60 V net</li>
+            <li>USB-C for flashing and power, with an RP2040 boot flash, 12 MHz crystal, and BOOTSEL/RUN buttons</li>
+          </ul>
+          <div class="chips"><span>Altium</span><span>RP2040</span><span>CAN FD</span><span>Buck converter</span><span>4-layer PCB</span></div>
+          <div class="links"><a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">schematic PDF ↗</a><a href="images/cev_dashboard.glb" download>3D model (.glb) ↓</a></div>
+        </div>
+        <div class="project-media">
+          <figure class="shot board3d">
+            <model-viewer src="images/cev_dashboard.glb" alt="3D model of the CEV dashboard PCB" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05" orientation="0deg -90deg 0deg" camera-orbit="30deg 60deg 95%" loading="lazy" touch-action="pan-y"></model-viewer>
+            <figcaption>Interactive 3D model exported from Altium: drag to rotate, scroll to zoom</figcaption>
+          </figure>
+          <figure class="shot contain">
+            <a href="images/cev_layout.png" target="_blank" rel="noopener"><img src="images/cev_layout.png" alt="CEV dashboard PCB layout in Altium, top layer in red and bottom layer in blue" loading="lazy" onerror="this.closest('figure').classList.add('empty')" /></a>
+            <figcaption>Layout in Altium: top copper in red, bottom in blue (click to enlarge)</figcaption>
+          </figure>
+        </div>
+      </div>
+      <figure class="wave sch">
+        <div class="sch-tabs" role="tablist" aria-label="Schematic sheet">
+          <button type="button" role="tab" aria-selected="true" data-src="images/cev_sch_top.svg">top level</button>
+          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_mcu.svg">RP2040 + USB</button>
+          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_can.svg">CAN FD</button>
+          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_buck.svg">60 V buck</button>
+        </div>
+        <a href="images/cev_sch_top.svg" target="_blank" rel="noopener"><img src="images/cev_sch_top.svg" alt="CEV dashboard schematic, top-level sheet" loading="lazy" /></a>
+        <figcaption><b>Schematic</b> · pick a sheet above; click it to open full size, or grab the <a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">PDF</a></figcaption>
+      </figure>
+    </article>
+
+    <!-- ─────────────── U5: SLAM ─────────────── -->
+    <article class="project reveal">
+      <div class="project-top">
+        <div class="project-info">
+          <div class="part"><span class="ref">U5</span>Robotics · Cornell Electric Vehicles · 2026</div>
           <h3>Sliding-Window Pose-Graph SLAM</h3>
           <p>The localization backend for CEV's autonomous car. It takes fused LiDAR + IMU odometry and LiDAR scans, optimizes a pose graph over the last 20 keyframes, and publishes the drift correction as <code>map → odom</code>. Old keyframes aren't deleted: they're marginalized into a prior, and then kept in an archive for loop closure, so cost per keyframe stays flat however long the car drives.</p>
           <ul class="proof">
@@ -604,42 +644,6 @@ void SlidingWindowPGO::updateMapToOdom() {
     map_to_odom_ = compose(kf.est, inverse(kf.odom));
 }</code></pre>
       </details>
-    </article>
-
-    <!-- ─────────────── U5: CEV dashboard PCB ─────────────── -->
-    <article class="project reveal">
-      <div class="project-top">
-        <div class="project-info">
-          <div class="part"><span class="ref">U5</span>PCB · Cornell Electric Vehicles · Fall 2026</div>
-          <h3>CAN Dashboard PCB</h3>
-          <p>The car's dashboard board: it reads six driver inputs, talks to the rest of the car over CAN FD, and runs straight off the 60 V traction bus. An RP2040 does the thinking, an MCP251863 handles CAN, and a 75 V buck makes the 5 V rail. Designed in Altium on four layers for JLCPCB. Drag the model to spin it.</p>
-          <ul class="proof">
-            <li><b>60 V → 5 V</b> with a RAA211820 synchronous buck (75 V, 2 A), then an LDO to 3.3 V that's diode-OR'd with USB power</li>
-            <li>MCP251863 CAN FD controller + transceiver on SPI, with a <b>split 62 Ω</b> termination for the bus</li>
-            <li>Six Mini-Fit sensor inputs and the power/CAN connector flush with the board edges on a <b>114.3 × 66 mm</b>, 4-layer board</li>
-            <li>All <b>58 nets</b> routed with <b>0 DRC violations</b> against JLCPCB's 4-layer rules, including a <b>0.5 mm</b> clearance rule around the 60 V net</li>
-            <li>USB-C for flashing and power, with an RP2040 boot flash, 12 MHz crystal, and BOOTSEL/RUN buttons</li>
-          </ul>
-          <div class="chips"><span>Altium</span><span>RP2040</span><span>CAN FD</span><span>Buck converter</span><span>4-layer PCB</span></div>
-          <div class="links"><a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">schematic PDF ↗</a><a href="images/cev_dashboard.glb" download>3D model (.glb) ↓</a></div>
-        </div>
-        <div class="project-media">
-          <figure class="shot board3d">
-            <model-viewer src="images/cev_dashboard.glb" alt="3D model of the CEV dashboard PCB" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05" orientation="0deg -90deg 0deg" camera-orbit="30deg 60deg 95%" loading="lazy" touch-action="pan-y"></model-viewer>
-            <figcaption>Interactive 3D model exported from Altium: drag to rotate, scroll to zoom</figcaption>
-          </figure>
-        </div>
-      </div>
-      <figure class="wave sch">
-        <div class="sch-tabs" role="tablist" aria-label="Schematic sheet">
-          <button type="button" role="tab" aria-selected="true" data-src="images/cev_sch_top.svg">top level</button>
-          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_mcu.svg">RP2040 + USB</button>
-          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_can.svg">CAN FD</button>
-          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_buck.svg">60 V buck</button>
-        </div>
-        <a href="images/cev_sch_top.svg" target="_blank" rel="noopener"><img src="images/cev_sch_top.svg" alt="CEV dashboard schematic, top-level sheet" loading="lazy" /></a>
-        <figcaption><b>Schematic</b> · pick a sheet above; click it to open full size, or grab the <a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">PDF</a></figcaption>
-      </figure>
     </article>
 
     <!-- ─────────────── U6: Polymer GNN ─────────────── -->
@@ -895,9 +899,9 @@ export function listScores(list) {
         <div class="org">Cornell Electric Vehicles · 70-member project team</div>
         <ul>
           <li>Built the <b>Rust integration layer</b> that ties perception, localization, mapping, and planning together</li>
-          <li>Developed the C++ pose-graph SLAM backend (see <a href="#projects">U4</a>) and now the FPGA accelerator (<a href="#projects">U1</a>)</li>
+          <li>Developed the C++ pose-graph SLAM backend (see <a href="#projects">U5</a>) and now the FPGA accelerator (<a href="#projects">U1</a>)</li>
           <li>Wrote RP2040 C++ firmware that turns UART commands into <b>PWM</b> for motor and steering control</li>
-          <li>Designed a 4-layer, 6-input <b>CAN dashboard PCB</b> in Altium (see <a href="#projects">U5</a>) and a reusable <b>60 V-input buck converter</b>; brought boards up with scopes and DMMs</li>
+          <li>Designed a 4-layer, 6-input <b>CAN dashboard PCB</b> in Altium (see <a href="#projects">U4</a>) and a reusable <b>60 V-input buck converter</b>; brought boards up with scopes and DMMs</li>
         </ul>
         <div class="xp-media">
           <figure class="shot">
