@@ -4,8 +4,26 @@
   <script>document.documentElement.classList.add('js');</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ishaan Parikh</title>
-  <meta name="description" content="Ishaan Parikh, ECE at Cornell. FPGA, DSP, embedded systems, and robotics projects with the code to back them up." />
+  <title>Ishaan Parikh · FPGA, DSP &amp; embedded hardware</title>
+  <meta name="description" content="Ishaan Parikh, ECE at Cornell. FPGA, DSP, embedded systems, and PCB projects, each with its verification status, results, and the code to back them up." />
+  <link rel="canonical" href="https://ishaanparikh.github.io/" />
+  <meta name="theme-color" content="#f8f6f0" />
+
+  <!-- social preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Ishaan Parikh" />
+  <meta property="og:title" content="Ishaan Parikh · FPGA, DSP &amp; embedded hardware" />
+  <meta property="og:description" content="ECE at Cornell. RTL with testbenches behind every number: a Winograd CNN convolution unit, a bit-exact RRC matched filter, an ITCH feed handler, and a 60 V CAN dashboard PCB." />
+  <meta property="og:url" content="https://ishaanparikh.github.io/" />
+  <meta property="og:image" content="https://ishaanparikh.github.io/images/og-card.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Ishaan Parikh's portfolio: the math has to fit in hardware" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ishaan Parikh · FPGA, DSP &amp; embedded hardware" />
+  <meta name="twitter:description" content="ECE at Cornell. RTL with testbenches behind every number." />
+  <meta name="twitter:image" content="https://ishaanparikh.github.io/images/og-card.jpg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -18,22 +36,26 @@
       --card: #ffffff;
       --ink: #1c1d20;
       --muted: #5c6068;
-      --faint: #8b8f96;
+      --faint: #6b6f76;       /* small metadata text: 4.7:1 on paper */
       --line: #e3dfd4;
       --grid: rgba(28, 29, 32, 0.045);
       --accent: #e0532b;      /* signal orange */
+      --accent-ink: #b8441f;  /* same orange, dark enough for small text */
       --accent-soft: #fdebe4;
       --blue: #2563a8;
       --blue-soft: #e7eff9;
       --green: #2f8a57;
+      --green-ink: #25784a;
       --code: #fbfaf7;
       --serif: 'Fraunces', Georgia, serif;
       --sans: 'IBM Plex Sans', system-ui, sans-serif;
       --mono: 'IBM Plex Mono', ui-monospace, monospace;
       --radius: 10px;
+      --nav-h: 60px;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
     body {
       background-color: var(--paper);
       background-image:
@@ -45,44 +67,50 @@
       font-size: 17px;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      overflow-wrap: break-word;
     }
     a { color: var(--blue); text-underline-offset: 3px; }
-    a:hover { color: var(--accent); }
-    img { max-width: 100%; display: block; }
+    a:hover { color: var(--accent-ink); }
+    img { max-width: 100%; height: auto; display: block; }
+    :focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; border-radius: 3px; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: .8rem; padding: 8px 12px; border-radius: 6px; }
+    .skip:focus { top: 10px; color: var(--paper); }
 
     .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
 
     /* ── NAV ── */
     nav {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(248, 246, 240, 0.86);
+      background: rgba(248, 246, 240, 0.92);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
     }
-    nav .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 60px; }
-    .logo { font-family: var(--mono); font-weight: 500; font-size: .92rem; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: .55rem; }
+    nav .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; height: var(--nav-h); }
+    .logo { font-family: var(--mono); font-weight: 500; font-size: .92rem; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: .55rem; white-space: nowrap; }
     .led { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(47,138,87,.18); animation: blink 2.4s infinite; }
     @keyframes blink { 0%, 70%, 100% { opacity: 1; } 80% { opacity: .25; } }
     .nav-links { display: flex; gap: 1.6rem; list-style: none; }
-    .nav-links a { font-family: var(--mono); font-size: .8rem; color: var(--muted); text-decoration: none; }
-    .nav-links a:hover { color: var(--accent); }
+    .nav-links a { font-family: var(--mono); font-size: .8rem; color: var(--muted); text-decoration: none; padding: 6px 0; }
+    .nav-links a:hover { color: var(--accent-ink); }
 
     /* ── HERO ── */
     .hero { padding: 84px 0 56px; }
     .hero-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 56px; align-items: center; }
-    .kicker { font-family: var(--mono); font-size: .82rem; color: var(--accent); margin-bottom: 18px; }
+    .kicker { font-family: var(--mono); font-size: .82rem; color: var(--accent-ink); margin-bottom: 18px; }
     h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(3rem, 7vw, 5.4rem); line-height: .98; letter-spacing: -.02em; }
     h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
     .clock { margin: 22px 0 22px; width: 100%; max-width: 420px; height: 26px; }
     .clock path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 6 0; }
     .clock .sig { stroke: var(--accent); stroke-dasharray: 600; stroke-dashoffset: 600; animation: draw 2.6s ease-out .3s forwards; }
     @keyframes draw { to { stroke-dashoffset: 0; } }
-    .lede { font-size: 1.15rem; color: var(--muted); max-width: 560px; }
+    .lede { font-size: 1.15rem; color: var(--muted); max-width: 540px; }
     .lede strong { color: var(--ink); font-weight: 500; }
     .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
     .btn {
       display: inline-flex; align-items: center; gap: .45rem;
-      font-family: var(--mono); font-size: .82rem; text-decoration: none;
+      font-family: var(--mono); font-size: .82rem; text-decoration: none; cursor: pointer;
       padding: 10px 16px; border-radius: 8px; border: 1px solid var(--ink);
       color: var(--ink); background: var(--card); transition: transform .15s, box-shadow .15s;
     }
@@ -98,7 +126,7 @@
       font-family: var(--mono); font-size: .74rem; padding: 8px 12px; line-height: 1.4;
       transform: rotate(-3deg);
     }
-    .tag-sticker b { color: var(--accent); font-weight: 500; }
+    .tag-sticker b { color: var(--accent-ink); font-weight: 500; }
 
     .now {
       margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr);
@@ -108,57 +136,92 @@
     .now div:last-child { border-right: 0; }
     .now small { display: block; font-family: var(--mono); font-size: .72rem; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
     .now span { font-size: .95rem; }
+    .now a { color: inherit; text-decoration-color: var(--line); }
 
     /* ── SECTIONS ── */
     section { padding: 64px 0; }
     .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px; }
-    .sec-num { font-family: var(--mono); font-size: .85rem; color: var(--accent); }
+    .sec-num { font-family: var(--mono); font-size: .85rem; color: var(--accent-ink); }
     h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -.01em; line-height: 1.1; }
-    .sec-sub { color: var(--muted); max-width: 640px; margin-bottom: 36px; }
+    .sec-sub { color: var(--muted); max-width: 680px; margin-bottom: 20px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 36px; font-family: var(--mono); font-size: .74rem; color: var(--muted); list-style: none; }
+    .legend li::before { margin-right: 6px; }
 
     /* ── PROJECT "DATASHEETS" ── */
     .project {
       background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
       margin-bottom: 28px; overflow: hidden;
     }
+    .project:target { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
     .project-top { display: grid; grid-template-columns: 1.1fr 1fr; }
-    .project-info { padding: 28px 30px; }
+    .project-info { padding: 28px 30px; min-width: 0; }
     .part {
       display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
       font-family: var(--mono); font-size: .74rem; color: var(--faint); margin-bottom: 10px;
     }
     .part .ref { color: var(--paper); background: var(--ink); border-radius: 4px; padding: 1px 7px; }
-    h3 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; line-height: 1.15; margin-bottom: 10px; }
+    .copy {
+      display: none; margin-left: auto; font-family: var(--mono); font-size: .72rem; cursor: pointer;
+      border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; background: var(--paper); color: var(--muted);
+    }
+    .js .copy { display: inline-flex; }
+    .copy:hover { color: var(--ink); border-color: var(--ink); }
+    .copy.done { color: var(--green-ink); border-color: var(--green); }
+    h3 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; line-height: 1.15; margin-bottom: 12px; }
+    h3 .anchor { color: inherit; text-decoration: none; }
+    h3 .anchor:hover { color: var(--accent-ink); }
     .project-info p { color: var(--muted); margin-bottom: 14px; }
+    .project-info p.mine { color: var(--ink); font-size: .95rem; border-left: 3px solid var(--accent); padding-left: 12px; }
+    .project-info p.mine b { font-family: var(--mono); font-size: .74rem; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-ink); display: block; }
+
+    /* implementation status */
+    .status { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .status li {
+      font-family: var(--mono); font-size: .72rem; line-height: 1.35; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 6px; padding: 3px 9px; background: var(--paper);
+    }
+    .status li b { color: var(--ink); font-weight: 500; }
+    .status li::before, .legend li::before { display: inline-block; width: 1.1em; font-weight: 600; }
+    .ok::before   { content: '✓'; color: var(--green-ink); }
+    .wip::before  { content: '◐'; color: var(--accent-ink); }
+    .no::before   { content: '○'; color: var(--faint); }
+    .status li.ok  { border-color: rgba(47,138,87,.35); }
+    .status li.wip { border-color: rgba(224,83,43,.35); }
+
     .proof { list-style: none; margin: 4px 0 18px; display: grid; gap: 8px; }
     .proof li { position: relative; padding-left: 22px; font-size: .95rem; }
-    .proof li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 600; }
+    .proof li::before { content: '✓'; position: absolute; left: 0; color: var(--green-ink); font-weight: 600; }
     .proof b { font-family: var(--mono); font-weight: 500; color: var(--ink); background: var(--blue-soft); padding: 0 4px; border-radius: 3px; }
+    .proof .grp { padding-left: 0; font-family: var(--mono); font-size: .72rem; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+    .proof .grp::before { content: none; }
+    .ev { font-family: var(--mono); font-size: .72rem; white-space: nowrap; }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
     .chips span { font-family: var(--mono); font-size: .72rem; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; color: var(--muted); }
-    .links { display: flex; flex-wrap: wrap; gap: 14px; font-family: var(--mono); font-size: .82rem; }
+    .links { display: flex; flex-wrap: wrap; gap: 8px 14px; font-family: var(--mono); font-size: .82rem; align-items: center; }
     .links a { text-decoration: none; border-bottom: 1px solid currentColor; }
-    .links .private { color: var(--faint); }
-    .note { font-size: .85rem !important; font-style: italic; }
+    .links a.repo { color: var(--paper); background: var(--ink); border: 0; border-radius: 6px; padding: 4px 10px; }
+    .links a.repo:hover { background: var(--accent-ink); color: #fff; }
 
     /* cards with no picture: one column, readable line length */
     .project-top:not(:has(.project-media)) { grid-template-columns: 1fr; }
     .project-top:not(:has(.project-media)) .project-info > * { max-width: 780px; }
-    .project-media { background: var(--paper); border-left: 1px solid var(--line); display: grid; gap: 1px; align-content: stretch; }
+    .project-media { background: var(--paper); border-left: 1px solid var(--line); display: grid; gap: 1px; align-content: stretch; min-width: 0; }
 
     /* Image slots: drop a file at the src path and it shows up; until then a dashed placeholder shows. */
     .shot { position: relative; margin: 0; background: var(--paper); min-height: 220px; display: flex; flex-direction: column; }
+    .shot > a { display: flex; flex: 1; }
     .shot img { width: 100%; height: 100%; object-fit: cover; flex: 1; }
     .shot video { width: 100%; display: block; background: #000; aspect-ratio: 73 / 54; object-fit: cover; }
     /* video player: play/pause, scrubber, speed, loop badge (grayscale) */
     .player { position: relative; background: #000; }
     .player .bar {
       position: absolute; left: 10px; right: 10px; bottom: 10px;
-      display: flex; align-items: center; gap: 10px;
+      display: none; align-items: center; gap: 10px;
       background: rgba(20,20,20,.8); backdrop-filter: blur(6px);
       border-radius: 8px; padding: 6px 10px; color: #f2f2f2;
       font-family: var(--mono); font-size: .72rem;
     }
+    .player.ready .bar { display: flex; }
     .player button {
       all: unset; cursor: pointer; display: grid; place-items: center; flex: none;
     }
@@ -173,31 +236,28 @@
     .player .loop i { display: inline-block; font-style: normal; }
     .player .loop.pulse i { animation: spin .6s ease-out; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    @media (max-width: 520px) { .player .time { display: none; } .player .bar { gap: 6px; } }
+    @media (max-width: 520px) { .player .time, .player .loop { display: none; } .player .bar { gap: 6px; } }
     .shot.contain img { object-fit: contain; background: #fff; padding: 10px; }
     .shot figcaption { font-family: var(--mono); font-size: .72rem; color: var(--muted); padding: 8px 14px; background: var(--card); border-top: 1px solid var(--line); }
-    .shot .slot { display: none; }
     .shot.empty img { display: none; }
-    .shot.empty .slot {
-      display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-      margin: 14px; border: 2px dashed #c9c3b4; border-radius: 8px; text-align: center; padding: 20px;
-      background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(224,83,43,.04) 10px, rgba(224,83,43,.04) 20px);
-      font-family: var(--mono); color: var(--faint); font-size: .76rem;
-    }
-    .shot.empty .slot strong { color: var(--accent); font-weight: 500; font-size: .8rem; letter-spacing: .04em; }
-    .shot.empty .slot code { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; color: var(--ink); }
 
-    /* full-width simulation waveform under a project */
+    /* full-width simulation waveform: scrolls inside its own box on narrow screens */
     .wave { margin: 0; border-top: 1px solid var(--line); background: var(--paper); }
-    .wave a { display: block; overflow-x: auto; }
+    .wave .scroll { display: block; overflow-x: auto; }
     .wave img { width: 100%; min-width: 640px; }
     .wave figcaption { font-family: var(--mono); font-size: .74rem; color: var(--muted); padding: 10px 30px; background: var(--card); border-top: 1px solid var(--line); }
-    .wave figcaption b { color: var(--accent); font-weight: 500; }
+    .wave figcaption b { color: var(--accent-ink); font-weight: 500; }
 
-    /* PCB: 3D board viewer + tabbed schematic sheets */
+    /* PCB: 3D board viewer (loaded on request) + tabbed schematic sheets */
     .board3d model-viewer { width: 100%; flex: 1; min-height: 340px; background: radial-gradient(circle at 50% 40%, #ffffff, #ebe7dc); --poster-color: transparent; }
+    .viewer-slot {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      padding: 24px; text-align: center; font-family: var(--mono); font-size: .76rem; color: var(--muted);
+      background: radial-gradient(circle at 50% 40%, #ffffff, #ebe7dc);
+    }
+    .viewer-slot .btn { display: none; }
+    .js .viewer-slot .btn { display: inline-flex; }
     .sch img { min-width: 0; background: #fff; }
-    .sch a { overflow: visible; }
     .sch-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 30px; background: var(--card); border-bottom: 1px solid var(--line); }
     .sch-tabs button {
       font-family: var(--mono); font-size: .74rem; cursor: pointer;
@@ -206,27 +266,63 @@
     .sch-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
     @media (max-width: 520px) { .sch-tabs { padding: 10px 18px; } }
 
-    /* code proof */
-    details.code { border-top: 1px solid var(--line); }
-    details.code summary {
+    /* expandable sections: details + code */
+    details.code, details.more { border-top: 1px solid var(--line); }
+    details.code > summary, details.more > summary {
       cursor: pointer; list-style: none; padding: 12px 30px;
       font-family: var(--mono); font-size: .8rem; color: var(--muted);
       display: flex; justify-content: space-between; gap: 12px; background: var(--code);
     }
-    details.code summary::-webkit-details-marker { display: none; }
-    details.code summary::after { content: '+ show code'; color: var(--blue); white-space: nowrap; }
-    details.code[open] summary::after { content: '− hide code'; }
-    details.code summary .file { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    details > summary::-webkit-details-marker { display: none; }
+    details.code > summary::after { content: '+ show code'; color: var(--blue); white-space: nowrap; }
+    details.code[open] > summary::after { content: '− hide code'; }
+    details.more > summary::after { content: '+ expand'; color: var(--blue); white-space: nowrap; }
+    details.more[open] > summary::after { content: '− collapse'; }
+    details.more > summary b { color: var(--ink); font-weight: 500; }
+    details > summary:hover::after { color: var(--accent-ink); }
+    details.code summary .file { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
     details.code summary .file b { color: var(--ink); font-weight: 500; }
+    .more-body { padding: 8px 30px 24px; background: var(--code); border-top: 1px dashed var(--line); }
+    .more-body > * { max-width: 800px; }
+    .more-body h4 { font-family: var(--mono); font-size: .74rem; font-weight: 500; color: var(--accent-ink); text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 8px; }
+    .more-body p, .more-body li { color: var(--muted); font-size: .94rem; }
+    .more-body p { margin-bottom: 10px; }
+    .more-body ul { padding-left: 20px; display: grid; gap: 6px; margin-bottom: 10px; }
+    .more-body b { color: var(--ink); font-weight: 500; }
+    .more-body code, .project-info code { font-family: var(--mono); font-size: .86em; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+    .more-body pre.cmd { max-height: none; border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; font-family: var(--mono); font-size: .78rem; background: var(--card); margin-bottom: 10px; }
+    .more-body .wave, .more-body .figs { max-width: none; margin: 14px -30px 0; }
+    .more-body .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
+    .tbl { overflow-x: auto; margin-bottom: 10px; }
+    .tbl table { border-collapse: collapse; font-size: .88rem; min-width: 100%; }
+    .tbl th, .tbl td { text-align: left; padding: 5px 12px 5px 0; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+    .tbl th { font-family: var(--mono); font-size: .72rem; font-weight: 500; color: var(--faint); text-transform: uppercase; letter-spacing: .05em; }
+    .tbl td:first-child { color: var(--ink); }
     pre { margin: 0; max-height: 440px; overflow: auto; background: var(--code); border-top: 1px dashed var(--line); }
-    pre code.hljs { background: transparent; padding: 18px 30px; font-family: var(--mono); font-size: .8rem; line-height: 1.6; }
+    pre code.hljs, pre > code { display: block; background: transparent; padding: 18px 30px; font-family: var(--mono); font-size: .8rem; line-height: 1.6; }
+
+    /* compact cards for the earlier ML projects */
+    .subhead { font-family: var(--mono); font-size: .78rem; font-weight: 500; color: var(--faint); text-transform: uppercase; letter-spacing: .08em; margin: 44px 0 14px; }
+    .compact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-items: start; }
+    .compact-grid .project { margin-bottom: 0; }
+    .compact .project-top { grid-template-columns: 1fr 120px; }
+    .compact .project-info { padding: 20px 22px; }
+    .compact h3 { font-size: 1.25rem; }
+    .compact .project-info p { font-size: .92rem; }
+    .compact .proof li { font-size: .9rem; }
+    .compact .project-media { border-left: 1px solid var(--line); }
+    .compact .shot { min-height: 0; }
+    .compact .shot img { aspect-ratio: 1; }
+    .compact details.code > summary { padding: 10px 22px; }
+    .compact pre > code, .compact pre code.hljs { padding: 14px 22px; }
 
     /* ── EXPERIENCE ── */
     .xp { display: grid; grid-template-columns: 170px 1fr; gap: 28px; padding: 30px 0; border-top: 1px solid var(--line); }
     .xp:last-of-type { border-bottom: 1px solid var(--line); }
+    .xp > div { min-width: 0; }
     .xp-when { font-family: var(--mono); font-size: .8rem; color: var(--faint); padding-top: 6px; }
     .xp h3 { font-size: 1.35rem; margin-bottom: 2px; }
-    .xp .org { font-family: var(--mono); font-size: .8rem; color: var(--accent); margin-bottom: 12px; }
+    .xp .org { font-family: var(--mono); font-size: .8rem; color: var(--accent-ink); margin-bottom: 12px; }
     .xp ul { list-style: none; display: grid; gap: 6px; margin-bottom: 14px; }
     .xp li { position: relative; padding-left: 20px; color: var(--muted); font-size: .96rem; }
     .xp li::before { content: '→'; position: absolute; left: 0; color: var(--faint); }
@@ -237,12 +333,12 @@
     .xp-media .shot.contain img { aspect-ratio: auto; max-height: 340px; }
     .xp details.code { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-top: 12px; }
     .xp details.code summary { padding: 10px 18px; }
-    .xp pre code.hljs { padding: 16px 18px; }
+    .xp pre > code, .xp pre code.hljs { padding: 16px 18px; }
 
     /* ── TOOLBOX ── */
     .toolbox { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .tool { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; }
-    .tool h4 { font-family: var(--mono); font-size: .78rem; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .tool h4 { font-family: var(--mono); font-size: .78rem; font-weight: 500; color: var(--accent-ink); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
     .tool .chips { margin: 0; }
     .tool .chips span { color: var(--ink); background: var(--paper); }
 
@@ -256,23 +352,28 @@
     .contact .btn { border-color: var(--paper); }
     .contact .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     .contact .btn:hover { box-shadow: 3px 3px 0 var(--paper); }
+    .contact :focus-visible { outline-color: var(--paper); }
     .contact .cta { justify-content: flex-end; margin: 0; }
 
     footer { padding: 36px 0 48px; font-family: var(--mono); font-size: .76rem; color: var(--faint); }
     footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
-    /* reveal */
-    .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
-    .js .reveal.in { opacity: 1; transform: none; }
+    /* reveal: only hides content once the observer is actually running */
+    .reveal-on .reveal:not(.in) { opacity: 0; transform: translateY(14px); }
+    .reveal-on .reveal { transition: opacity .55s ease, transform .55s ease; }
     @media (prefers-reduced-motion: reduce) {
-      .js .reveal { opacity: 1; transform: none; transition: none; }
+      .reveal-on .reveal:not(.in) { opacity: 1; transform: none; }
       .led, .clock .sig { animation: none; stroke-dashoffset: 0; }
+    }
+    @media print {
+      .reveal-on .reveal:not(.in) { opacity: 1; transform: none; }
+      nav, .copy { display: none !important; }
     }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
       .hero { padding-top: 48px; }
-      .hero-grid, .project-top, .contact { grid-template-columns: 1fr; }
+      .hero-grid, .project-top, .contact, .compact-grid { grid-template-columns: 1fr; }
       .portrait { order: -1; width: min(260px, 80%); }
       .project-media { border-left: 0; border-top: 1px solid var(--line); }
       .now { grid-template-columns: 1fr; }
@@ -288,12 +389,23 @@
     @media (max-width: 520px) {
       .wrap { padding: 0 16px; }
       .project-info { padding: 22px 18px; }
-      details.code summary { padding: 12px 18px; }
-      pre code.hljs { padding: 16px 18px; }
+      details.code > summary, details.more > summary { padding: 12px 18px; }
+      pre code.hljs, pre > code { padding: 16px 18px; }
+      .more-body { padding: 6px 18px 20px; }
+      .more-body .wave, .more-body .figs { margin: 14px -18px 0; }
+      .wave figcaption { padding: 10px 18px; }
+      .compact .project-top { grid-template-columns: 1fr 88px; }
+      .compact .project-info { padding: 18px; }
       .tag-sticker { left: -8px; }
       .logo { font-size: .8rem; }
       .nav-links { gap: .8rem; }
       .nav-links a { font-size: .72rem; }
+      .copy { margin-left: 0; }
+    }
+    @media (max-width: 380px) {
+      .logo { font-size: .74rem; }
+      .logo .led { display: none; }
+      .nav-links { gap: .5rem; }
     }
   </style>
 </head>
@@ -301,15 +413,19 @@
 
 <!--
   HOW TO ADD PHOTOS
-  Every image on this page is a "slot": <figure class="shot"> with an <img src="images/...">.
-  If the file exists it shows; if not, a dashed "PHOTO SLOT" placeholder shows the exact
-  filename to use. So to add a photo, just save it in images/ with that name. No HTML edits needed.
-  See images/README.md for the full list of slots.
+  Every image on this page is a <figure class="shot"> with an <img src="images/...">.
+  If the file is missing, the figure collapses to its caption. See images/README.md.
+
+  STATUS PILLS (on each project)
+  ok = done and evidenced, wip = in progress, no = not started / not yet shown.
+  Only mark something ok when a test, report, or doc in the linked repo backs it.
 -->
 
-<nav>
+<a class="skip" href="#projects">skip to projects</a>
+
+<nav aria-label="Main">
   <div class="wrap">
-    <a class="logo" href="#top"><span class="led"></span>ishaan.parikh</a>
+    <a class="logo" href="#top"><span class="led" aria-hidden="true"></span>ishaan.parikh</a>
     <ul class="nav-links">
       <li><a href="#projects">projects</a></li>
       <li><a href="#experience">experience</a></li>
@@ -319,6 +435,7 @@
   </div>
 </nav>
 
+<main>
 <header class="hero" id="top">
   <div class="wrap">
     <div class="hero-grid">
@@ -328,7 +445,7 @@
         <svg class="clock" viewBox="0 0 420 26" aria-hidden="true">
           <path class="sig" d="M0 22 H20 V4 H50 V22 H80 V4 H110 V22 H140 V4 H170 V22 H200 V4 H230 V22 H260 V4 H290 V22 H320 V4 H350 V22 H380 V4 H410 V22 H420" />
         </svg>
-        <p class="lede">I like the part of engineering where <strong>the math has to fit in hardware</strong>: fixed-point bit widths, cycle counts, PCB layers, and testbenches that won't let me lie to myself. Right now that means FPGA accelerators and DSP, with a side of SLAM and battery management.</p>
+        <p class="lede">I like the part of engineering where <strong>the math has to fit in hardware</strong>. I write RTL for FPGA accelerators and DSP, design PCBs, and verify everything against a reference model. Looking for hardware, FPGA, embedded, and EDA internships.</p>
         <div class="cta">
           <a class="btn primary" href="#projects">see the work ↓</a>
           <a class="btn" href="https://github.com/IshaanParikh" target="_blank" rel="noopener">github</a>
@@ -337,15 +454,15 @@
         </div>
       </div>
       <div class="portrait">
-        <img src="images/headshot.jpg" alt="Ishaan Parikh" />
+        <img src="images/headshot.jpg" alt="Ishaan Parikh" width="800" height="1200" fetchpriority="high" />
         <div class="tag-sticker">GPA <b>3.83</b> · ECE<br/>Ithaca, NY</div>
       </div>
     </div>
 
     <div class="now reveal">
-      <div><small>building</small><span>An INT8 CNN accelerator on FPGA for Cornell Electric Vehicles</span></div>
+      <div><small>building</small><span><a href="#cnn-accelerator">A Winograd convolution unit for CEV's FPGA CNN accelerator</a></span></div>
       <div><small>just shipped</small><span>A 4S battery management system at Low Light Innovations</span></div>
-      <div><small>also</small><span>VP of Internal Affairs, Kappa Theta Pi</span></div>
+      <div><small>award</small><span>Apple Hardware Technical Challenge scholarship</span></div>
     </div>
   </div>
 </header>
@@ -353,31 +470,70 @@
 <section id="projects">
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">01</span><h2>Projects</h2></div>
-    <p class="sec-sub">Each one comes with receipts: the numbers, the repo, and a chunk of the actual code. Click <span style="font-family:var(--mono);color:var(--blue)">+ show code</span> on any card.</p>
+    <p class="sec-sub">Each card leads with what I built and the results that matter, with a link to the test or report behind each number. Expand a card for the methodology, supporting math, and code.</p>
+    <ul class="legend" aria-label="Status legend">
+      <li class="ok">done, with evidence linked</li>
+      <li class="wip">in progress</li>
+      <li class="no">not yet</li>
+    </ul>
 
     <!-- ─────────────── U1: CNN accelerator ─────────────── -->
-    <article class="project reveal">
+    <article class="project reveal" id="cnn-accelerator">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U1</span>FPGA · Cornell Electric Vehicles · Sep 2026 – now</div>
-          <h3>FPGA CNN Accelerator</h3>
-          <p>An FPGA accelerator for INT8 inference on LFD-RoadSeg, the ResNet-18 lane-segmentation network the CEV car drives on. We're prototyping on MNIST first. My part is the arithmetic: how wide every wire needs to be, and how to do fewer multiplies. That now includes a Winograd convolution unit in RTL that drops in for the direct 3×3 one.</p>
-          <ul class="proof">
-            <li>Specified INT8 math with wide accumulators and <b>multiply-and-shift</b> rescaling, so there are no dividers in hardware</li>
-            <li>Sized the problem: one 3×3 RoadSeg layer is <b>1.1 B multiplies</b> and <b>3.9 MB</b> of memory per frame</li>
-            <li>Built a Winograd F(2×2, 3×3) convolution unit in SystemVerilog: <b>16 multiplies</b> for a 2×2 output block instead of 36, with every transform done in adders</li>
-            <li>Integer-only by design: weights use 2G, so the hardware computes exactly 4× the direct result and a <b>2-bit shift</b> undoes it</li>
-            <li>Testbench passes <b>100,006 vectors with 0 errors</b> (100,000 random tiles plus corner cases) against a Python reference model</li>
-            <li>Sized the MNIST prototype's block RAM at <b>88.5 kB</b> and drafted the FSM that sequences its conv and pool layers</li>
+          <div class="part"><span class="ref">U1</span>FPGA · Cornell Electric Vehicles · Sep 2026 – now<button class="copy" type="button" data-id="cnn-accelerator" aria-label="Copy link to FPGA CNN Accelerator">copy link</button></div>
+          <h3><a class="anchor" href="#cnn-accelerator">FPGA CNN Accelerator: Winograd Convolution Unit</a></h3>
+          <ul class="status" aria-label="Implementation status">
+            <li class="ok"><b>Winograd unit</b> · RTL simulation passing</li>
+            <li class="wip"><b>Full accelerator</b> · in progress, team project</li>
+            <li class="no"><b>Synthesis &amp; board</b> · not yet</li>
           </ul>
-          <div class="chips"><span>Verilog</span><span>SystemVerilog</span><span>Python</span><span>INT8 quantization</span><span>Winograd</span></div>
-          <div class="links"><a href="https://github.com/cornellev/cnn-accelerator" target="_blank" rel="noopener">cornellev/cnn-accelerator ↗</a><a href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/rtl/winograd_3x3_conv.sv" target="_blank" rel="noopener">winograd_3x3_conv.sv ↗</a></div>
+          <p>CEV is building an FPGA accelerator for INT8 inference on its lane-segmentation network, prototyping on MNIST first. The Winograd unit is a drop-in alternative to the direct 3×3 convolution block; it is not yet wired into the accelerator datapath.</p>
+          <p class="mine"><b>My part</b>The arithmetic. I designed, wrote, and verified the Winograd F(2×2, 3×3) unit in SystemVerilog, with its testbench and Python reference model.</p>
+          <ul class="proof">
+            <li><b>16 multiplies</b> per 2×2 output tile instead of 36 for direct convolution; all transforms are adders. This is a multiplication count, not a measured speedup. <a class="ev" href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/rtl/winograd_3x3_conv.sv" target="_blank" rel="noopener">RTL ↗</a></li>
+            <li><b>100,006 vectors, 0 errors</b> in RTL simulation (100,000 random tiles plus corner cases) against a direct-convolution Python reference. <a class="ev" href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/tb/winograd_3x3_conv_tb.sv" target="_blank" rel="noopener">testbench ↗</a></li>
+            <li>Integer-only: weights use 2G, so the hardware computes exactly 4× the direct result and a <b>2-bit shift</b> undoes it.</li>
+          </ul>
+          <div class="chips"><span>SystemVerilog</span><span>Python</span><span>Icarus Verilog</span><span>INT8 quantization</span><span>Winograd</span></div>
+          <div class="links"><a class="repo" href="https://github.com/cornellev/cnn-accelerator" target="_blank" rel="noopener">cornellev/cnn-accelerator ↗</a><a href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/rtl/winograd_3x3_conv.sv" target="_blank" rel="noopener">winograd_3x3_conv.sv ↗</a></div>
         </div>
       </div>
       <figure class="wave">
-        <a href="images/cnn_winograd_waveform.png" target="_blank" rel="noopener"><img src="images/cnn_winograd_waveform.png" alt="Winograd unit simulation waveform" loading="lazy" /></a>
-        <figcaption><b>Simulation waveform</b> · first 12 test vectors: the RTL outputs track the direct-convolution reference on every vector (click to enlarge)</figcaption>
+        <a class="scroll" href="images/cnn_winograd_waveform.png" target="_blank" rel="noopener"><img src="images/cnn_winograd_waveform.png" alt="Winograd unit simulation waveform" width="2080" height="764" loading="lazy" decoding="async" /></a>
+        <figcaption><b>RTL simulation waveform</b> · first 12 test vectors: the RTL outputs track the direct-convolution reference on every vector (click to enlarge)</figcaption>
       </figure>
+      <details class="more">
+        <summary><span><b>Details</b> · supporting math, sizing, how to reproduce</span></summary>
+        <div class="more-body">
+          <h4>Where 36 → 16 comes from</h4>
+          <p>Direct 3×3 convolution needs 9 multiplies per output, so a 2×2 output tile costs <b>4 × 9 = 36</b>. Winograd F(2×2, 3×3) transforms a 4×4 input tile and the 3×3 kernel into a 4×4 domain where the convolution becomes one elementwise product: <b>(2 + 3 − 1)² = 16</b> multiplies, 2.25× fewer per tile. The price is adders for the input transform (Bᵀ d B) and output transform (Aᵀ m A); the kernel transform is precomputed offline.</p>
+          <p>The unit is combinational and has not been synthesized or integrated yet, so there is no clock-rate, latency, or resource number to compare against the direct block.</p>
+          <h4>Bit widths</h4>
+          <div class="tbl"><table>
+            <thead><tr><th>Signal</th><th>Width</th></tr></thead>
+            <tbody>
+              <tr><td>Input pixels d (4×4 tile)</td><td>8-bit unsigned</td></tr>
+              <tr><td>Input transform Bᵀ d B</td><td>11-bit signed</td></tr>
+              <tr><td>Transformed kernel U′ = G′ g G′ᵀ (G′ = 2G)</td><td>12-bit signed</td></tr>
+              <tr><td>Products m = U′ ⊙ V</td><td>23-bit signed</td></tr>
+              <tr><td>Output transform Aᵀ m A</td><td>25-bit signed</td></tr>
+              <tr><td>Output, after the exact <code>&gt;&gt;&gt; 2</code></td><td>20-bit signed</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Other sizing work for the team</h4>
+          <ul>
+            <li>Specified INT8 math with wide accumulators and <b>multiply-and-shift</b> rescaling, so there are no dividers in hardware.</li>
+            <li>Sized the target network: one 3×3 RoadSeg (ResNet-18) layer is about <b>1.1 B multiplies</b> and <b>3.9 MB</b> of memory per frame (hand calculation).</li>
+            <li>Sized the MNIST prototype's block RAM at <b>88.5 kB</b> and drafted the FSM that sequences its conv and pool layers.</li>
+          </ul>
+          <h4>Reproduce the simulation</h4>
+          <p>From <code>mnist/</code> in the repo, with Icarus Verilog 12. The vectors come from <a href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/scripts/winograd_3x3_vectors.py" target="_blank" rel="noopener">scripts/winograd_3x3_vectors.py</a> (seed 1).</p>
+          <pre class="cmd">iverilog -g2012 -o winograd.vvp tb/winograd_3x3_conv_tb.sv rtl/winograd_3x3_conv.sv
+vvp winograd.vvp
+# WINOGRAD_3x3_CONV TB: PASS -- 100006 vectors, 0 errors</pre>
+        </div>
+      </details>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>mnist/rtl/winograd_3x3_conv.sv</b></span></summary>
         <pre><code class="language-verilog">module winograd_3x3_conv
@@ -418,37 +574,66 @@ endmodule</code></pre>
     </article>
 
     <!-- ─────────────── U2: RRC matched filter ─────────────── -->
-    <article class="project reveal">
+    <article class="project reveal" id="rrc-matched-filter">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U2</span>DSP · FPGA · Jul 2026 – now</div>
-          <h3>RRC Matched Filter for a QPSK Receiver</h3>
-          <p>A 33-tap root-raised-cosine matched filter built from hand-rolled radix-4 Booth multipliers, wrapped in AXI4-Stream with back-pressure, and checked bit-for-bit against a Python model on real modulated data. The constellation on the right is the proof: noisy in, four clean clusters out.</p>
+          <div class="part"><span class="ref">U2</span>DSP · FPGA · Jul 2026 – now<button class="copy" type="button" data-id="rrc-matched-filter" aria-label="Copy link to RRC Matched Filter">copy link</button></div>
+          <h3><a class="anchor" href="#rrc-matched-filter">RRC Matched Filter for a QPSK Receiver</a></h3>
+          <ul class="status" aria-label="Implementation status">
+            <li class="ok"><b>33-tap, I+Q</b> · RTL simulation passing</li>
+            <li class="ok"><b>21-tap, single channel</b> · Quartus fit on Cyclone IV</li>
+            <li class="no"><b>On-board demo</b> · not yet</li>
+          </ul>
+          <p>A root-raised-cosine matched filter built from hand-rolled radix-4 Booth multipliers, wrapped in AXI4-Stream with back-pressure, and checked bit-for-bit against a Python model on real modulated data. The full design is verified in simulation; a smaller version was compiled for a low-cost Cyclone IV.</p>
+          <p class="mine"><b>My part</b>Solo project: RTL, the bit-exact Python golden model and stimulus, testbenches, and Quartus build scripts.</p>
           <ul class="proof">
-            <li><b>0 mismatches</b> in 16,384 filter outputs vs. the bit-exact golden model</li>
-            <li>Booth multiplier: <b>0 errors</b> in 81,986 comparisons against Verilog <code>*</code></li>
-            <li><b>16,412 beats in, 16,412 out</b> under random stalls and gaps (no drops, no duplicates)</li>
-            <li>Bit error rate within <b>1.10×</b> of theoretical QPSK; +5.19 dB matched-filter gain</li>
-            <li>21-tap version runs on a Cyclone IV at <b>129 MHz</b> using 74% of logic elements</li>
+            <li class="grp">Verification · 33-tap dual-channel design, Icarus Verilog</li>
+            <li><b>0 mismatches</b> in 16,384 filter outputs vs. the bit-exact golden model, under random stalls and gaps. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/sim/tb_rrc_fir_axis.v" target="_blank" rel="noopener">testbench ↗</a></li>
+            <li>Bit error rate within <b>1.10×</b> of theoretical QPSK (54 errors in 8,174 bits at Es/N0 = 8 dB). <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter#results" target="_blank" rel="noopener">results ↗</a></li>
+            <li class="grp">Implementation · 21-tap single-channel version, EP4CE6 Cyclone IV</li>
+            <li>Quartus fit at <b>129 MHz</b> F<sub>max</sub> using <b>74%</b> of logic elements. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/hw_demo/build.tcl" target="_blank" rel="noopener">build script ↗</a></li>
           </ul>
           <div class="chips"><span>Verilog</span><span>Python</span><span>Quartus</span><span>Icarus Verilog</span><span>AXI4-Stream</span></div>
-          <div class="links"><a href="https://github.com/IshaanParikh/rrc-matched-filter" target="_blank" rel="noopener">IshaanParikh/rrc-matched-filter ↗</a></div>
+          <div class="links"><a class="repo" href="https://github.com/IshaanParikh/rrc-matched-filter" target="_blank" rel="noopener">IshaanParikh/rrc-matched-filter ↗</a></div>
         </div>
         <div class="project-media">
           <figure class="shot contain">
-            <img src="images/rrc_constellation.jpg" alt="QPSK constellation before and after the RRC filter" onerror="this.parentElement.classList.add('empty')" />
-            <figcaption>QPSK at +2 dB SNR: raw samples (left) vs. after the Verilog filter (right)</figcaption>
+            <a href="images/rrc_constellation.jpg" target="_blank" rel="noopener"><img src="images/rrc_constellation.jpg" alt="QPSK constellation before and after the RRC filter" width="1125" height="667" loading="lazy" decoding="async" /></a>
+            <figcaption>QPSK at +2 dB SNR: raw samples (left) vs. after the Verilog filter in simulation (right)</figcaption>
           </figure>
           <figure class="shot contain">
-            <img src="images/rrc_eye.jpg" alt="Eye diagram of the filtered signal" onerror="this.parentElement.classList.add('empty')" />
-            <figcaption>Eye diagram on a clean channel: open at the sampling instant (zero ISI)</figcaption>
+            <img src="images/rrc_eye.jpg" alt="Eye diagram of the filtered signal" width="973" height="557" loading="lazy" decoding="async" />
+            <figcaption>Eye diagram on a clean channel, simulation: open at the sampling instant (zero ISI)</figcaption>
           </figure>
         </div>
       </div>
-      <figure class="wave">
-        <a href="images/rrc_waveform.png" target="_blank" rel="noopener"><img src="images/rrc_waveform.png" alt="RRC filter AXI4-Stream simulation waveform" loading="lazy" /></a>
-        <figcaption><b>Simulation waveform</b> · 30 cycles of random stalls and gaps: the delay line only moves on real samples, the output still drains on every ready (click to enlarge)</figcaption>
-      </figure>
+      <details class="more">
+        <summary><span><b>Details</b> · more results, the scaled-down build, waveform</span></summary>
+        <div class="more-body">
+          <h4>All verification results (33-tap, simulation)</h4>
+          <div class="tbl"><table>
+            <thead><tr><th>Check</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Filter output vs. golden model</td><td>0 mismatches in 16,384 samples</td></tr>
+              <tr><td>Booth multiplier vs. Verilog <code>*</code></td><td>0 errors in 81,986 comparisons</td></tr>
+              <tr><td>Back-pressure</td><td>16,412 beats in, 16,412 out (no drops, no duplicates)</td></tr>
+              <tr><td>Pipeline latency</td><td>12 cycles, measured, matches the parameter</td></tr>
+              <tr><td>Saturation coverage</td><td>237 saturating outputs, all bit-exact</td></tr>
+              <tr><td>Link performance</td><td>BER 1.10× theory; +5.19 dB matched-filter gain</td></tr>
+              <tr><td>Zero-ISI</td><td>eye open at the sampling instant on a clean channel</td></tr>
+            </tbody>
+          </table></div>
+          <p>Everything above comes from one regression script: <code>./sim/run_sim.sh</code> (Python with numpy/scipy/matplotlib, Icarus Verilog 12). It regenerates the stimulus from a fixed seed, so the numbers reproduce exactly.</p>
+          <h4>Why the hardware build is smaller</h4>
+          <p>The full 33-tap I+Q design needs about 14,000 logic cells, more than the EP4CE6's 6,272. The <a href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/hw_demo/top_single_channel.v" target="_blank" rel="noopener">hw_demo top level</a> wraps one <code>rrc_fir_core</code> with 21 taps and no AXI wrapper. It reuses the verified core, but it is a different filter, so the 129 MHz and 74% numbers apply to it and not to the 33-tap design. Hard DSP blocks are disabled so the Booth multipliers are what get measured.</p>
+          <pre class="cmd">quartus_sh  -t hw_demo/build.tcl
+quartus_sta -t hw_demo/report_timing.tcl   # Fmax + critical path</pre>
+          <figure class="wave">
+            <a class="scroll" href="images/rrc_waveform.png" target="_blank" rel="noopener"><img src="images/rrc_waveform.png" alt="RRC filter AXI4-Stream simulation waveform" width="2080" height="697" loading="lazy" decoding="async" /></a>
+            <figcaption><b>RTL simulation waveform</b> · 30 cycles of random stalls and gaps: the delay line only moves on real samples, the output still drains on every ready (click to enlarge)</figcaption>
+          </figure>
+        </div>
+      </details>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>rtl/booth_mult_r4.v</b></span></summary>
         <pre><code class="language-verilog">// S1: register operands, precompute the 4 multiples once
@@ -480,25 +665,51 @@ end</code></pre>
     </article>
 
     <!-- ─────────────── U3: ITCH feed handler ─────────────── -->
-    <article class="project reveal">
+    <article class="project reveal" id="itch-feed-handler">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U3</span>FPGA · Trading systems · Apr – Jul 2026</div>
-          <h3>Nasdaq ITCH 5.0 FPGA Feed Handler</h3>
+          <div class="part"><span class="ref">U3</span>FPGA · Trading systems · Apr – Jul 2026<button class="copy" type="button" data-id="itch-feed-handler" aria-label="Copy link to Nasdaq ITCH Feed Handler">copy link</button></div>
+          <h3><a class="anchor" href="#itch-feed-handler">Nasdaq ITCH 5.0 FPGA Feed Handler</a></h3>
+          <ul class="status" aria-label="Implementation status">
+            <li class="ok"><b>Decoder, order book, OUCH encoder</b> · RTL simulation passing</li>
+            <li class="no"><b>Vivado synthesis</b> · not yet reported</li>
+            <li class="no"><b>On-board demo</b> · not yet</li>
+          </ul>
           <p>A hardware market-data path: a byte-serial framing FSM decodes Nasdaq ITCH messages, feeds an order book held in hardware, and an OUCH encoder sends orders back out. Every block has its own cocotb testbench and a Python reference model.</p>
+          <p class="mine"><b>My part</b>Solo project: the SystemVerilog for all three blocks and the top level, the cocotb testbenches, and the Python reference model.</p>
           <ul class="proof">
-            <li><b>36 cocotb tests</b> on Verilator across the decoder, order book, OUCH encoder, and full integration</li>
-            <li>Checked <b>500 seeded messages</b> against the Python model, with invalid order references in <b>15%</b> of them on purpose</li>
-            <li>Tracked an integration mismatch down to decode errors registering <b>one cycle</b> ahead of order-book outputs</li>
+            <li><b>36 cocotb tests</b> on Verilator across the decoder, order book, OUCH encoder, and full integration. <a class="ev" href="https://github.com/IshaanParikh/FPGA-market-maker/tree/main/tb" target="_blank" rel="noopener">tests ↗</a></li>
+            <li><b>500 seeded random messages</b> checked against the Python model after every one, with about 15% of executions, cancels, deletes, and replaces aimed at made-up order refs. <a class="ev" href="https://github.com/IshaanParikh/FPGA-market-maker/blob/main/tb/book/test_book.py" target="_blank" rel="noopener">test_book.py ↗</a></li>
+            <li>Integration test streams raw ITCH bytes through decode and book together, checking the best bid and ask after each message. <a class="ev" href="https://github.com/IshaanParikh/FPGA-market-maker/blob/main/tb/top/test_top.py" target="_blank" rel="noopener">test_top.py ↗</a></li>
           </ul>
           <div class="chips"><span>SystemVerilog</span><span>cocotb</span><span>Verilator</span><span>Python</span><span>Vivado</span></div>
-          <div class="links"><a href="https://github.com/IshaanParikh/FPGA-market-maker" target="_blank" rel="noopener">IshaanParikh/FPGA-market-maker ↗</a></div>
+          <div class="links"><a class="repo" href="https://github.com/IshaanParikh/FPGA-market-maker" target="_blank" rel="noopener">IshaanParikh/FPGA-market-maker ↗</a></div>
         </div>
       </div>
       <figure class="wave">
-        <a href="images/itch_waveform.png" target="_blank" rel="noopener"><img src="images/itch_waveform.png" alt="ITCH decoder and order book simulation waveform" loading="lazy" /></a>
-        <figcaption><b>Simulation waveform</b> · one 36-byte add-order frame walks the FSM through LEN_HI, LEN_LO, BODY, DECODE, then the book posts the new best bid (click to enlarge)</figcaption>
+        <a class="scroll" href="images/itch_waveform.png" target="_blank" rel="noopener"><img src="images/itch_waveform.png" alt="ITCH decoder and order book simulation waveform" width="2240" height="1033" loading="lazy" decoding="async" /></a>
+        <figcaption><b>RTL simulation waveform</b> · one 36-byte add-order frame walks the FSM through LEN_HI, LEN_LO, BODY, DECODE, then the book posts the new best bid (click to enlarge)</figcaption>
       </figure>
+      <details class="more">
+        <summary><span><b>Details</b> · test breakdown, a debugging story, how to run</span></summary>
+        <div class="more-body">
+          <h4>Tests by block</h4>
+          <div class="tbl"><table>
+            <thead><tr><th>Testbench</th><th>Tests</th><th>Covers</th></tr></thead>
+            <tbody>
+              <tr><td>itch_decode</td><td>13</td><td>all 7 message types, bad type, wrong and zero length, back-to-back frames</td></tr>
+              <tr><td>order_book</td><td>14</td><td>adds, partial and full executions, cancels, replaces, unknown refs, capacity, 500-message random run</td></tr>
+              <tr><td>ouch_encode</td><td>5</td><td>enter, replace, cancel, unsupported request, back-to-back</td></tr>
+              <tr><td>top (integration)</td><td>4</td><td>raw bytes through decode and book</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Debugging note</h4>
+          <p>The first integration run disagreed with the model. I tracked it to decode errors registering <b>one cycle</b> ahead of the order book's outputs: the book registers its results a cycle after <code>msg_valid</code>, so the test was sampling too early. The fix was in the testbench timing, and it is documented in <code>test_top.py</code>.</p>
+          <h4>Run it</h4>
+          <pre class="cmd">make sim-all          # every cocotb testbench (Verilator 5.036+)
+make sim MOD=book     # one block</pre>
+        </div>
+      </details>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>rtl/decode/itch_decode.sv</b></span></summary>
         <pre><code class="language-verilog">typedef enum logic [1:0] { ST_LEN_HI, ST_LEN_LO, ST_BODY, ST_DECODE } state_e;
@@ -538,78 +749,126 @@ always_ff @(posedge clk) begin
     </article>
 
     <!-- ─────────────── U4: CEV dashboard PCB ─────────────── -->
-    <article class="project reveal">
+    <article class="project reveal" id="can-dashboard-pcb">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U4</span>PCB · Cornell Electric Vehicles · Fall 2026</div>
-          <h3>CAN Dashboard PCB</h3>
-          <p>The car's dashboard board: it reads six driver inputs, talks to the rest of the car over CAN FD, and runs straight off the 60 V traction bus. An RP2040 does the thinking, an MCP251863 handles CAN, and a 75 V buck makes the 5 V rail. Designed in Altium on four layers for JLCPCB. Drag the model to spin it.</p>
+          <div class="part"><span class="ref">U4</span>PCB · Cornell Electric Vehicles · Fall 2026<button class="copy" type="button" data-id="can-dashboard-pcb" aria-label="Copy link to CAN Dashboard PCB">copy link</button></div>
+          <h3><a class="anchor" href="#can-dashboard-pcb">CAN Dashboard PCB</a></h3>
+          <ul class="status" aria-label="Implementation status">
+            <li class="ok"><b>Schematic &amp; 4-layer layout</b> · complete, DRC clean</li>
+          </ul>
+          <p>The car's dashboard board: it reads six driver inputs, talks to the rest of the car over CAN FD, and runs straight off the 60 V traction bus. An RP2040 does the thinking, an MCP251863 handles CAN, and a 75 V buck makes the 5 V rail.</p>
+          <p class="mine"><b>My part</b>Designed the board in Altium: schematic, part selection, and the four-layer layout for JLCPCB.</p>
           <ul class="proof">
             <li><b>60 V → 5 V</b> with a RAA211820 synchronous buck (75 V, 2 A), then an LDO to 3.3 V that's diode-OR'd with USB power</li>
             <li>MCP251863 CAN FD controller + transceiver on SPI, with a <b>split 62 Ω</b> termination for the bus</li>
-            <li>Six Mini-Fit sensor inputs and the power/CAN connector flush with the board edges on a <b>114.3 × 66 mm</b>, 4-layer board</li>
             <li>All <b>58 nets</b> routed with <b>0 DRC violations</b> against JLCPCB's 4-layer rules, including a <b>0.5 mm</b> clearance rule around the 60 V net</li>
-            <li>USB-C for flashing and power, with an RP2040 boot flash, 12 MHz crystal, and BOOTSEL/RUN buttons</li>
           </ul>
           <div class="chips"><span>Altium</span><span>RP2040</span><span>CAN FD</span><span>Buck converter</span><span>4-layer PCB</span></div>
-          <div class="links"><a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">schematic PDF ↗</a><a href="images/cev_dashboard.glb" download>3D model (.glb) ↓</a></div>
+          <div class="links"><a class="repo" href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">schematic PDF ↗</a><a href="images/cev_dashboard.glb" download>3D model (.glb) ↓</a></div>
         </div>
         <div class="project-media">
-          <figure class="shot board3d">
-            <model-viewer src="images/cev_dashboard.glb" alt="3D model of the CEV dashboard PCB" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05" orientation="0deg -90deg 0deg" camera-orbit="30deg 60deg 95%" loading="lazy" touch-action="pan-y"></model-viewer>
-            <figcaption>Interactive 3D model exported from Altium: drag to rotate, scroll to zoom</figcaption>
-          </figure>
           <figure class="shot contain">
-            <a href="images/cev_layout.png" target="_blank" rel="noopener"><img src="images/cev_layout.png" alt="CEV dashboard PCB layout in Altium, top layer in red and bottom layer in blue" loading="lazy" onerror="this.closest('figure').classList.add('empty')" /></a>
+            <a href="images/cev_layout.png" target="_blank" rel="noopener"><img src="images/cev_layout.png" alt="CEV dashboard PCB layout in Altium, top layer in red and bottom layer in blue" width="1238" height="726" loading="lazy" decoding="async" /></a>
             <figcaption>Layout in Altium: top copper in red, bottom in blue (click to enlarge)</figcaption>
+          </figure>
+          <figure class="shot board3d">
+            <div class="viewer-slot">
+              <button type="button" class="btn load3d">load interactive 3D board · 8 MB</button>
+              <span class="viewer-msg">Exported from Altium. Or <a href="images/cev_dashboard.glb" download>download the .glb</a>.</span>
+            </div>
+            <figcaption>3D model: loads on request, then drag to rotate and scroll to zoom</figcaption>
           </figure>
         </div>
       </div>
-      <figure class="wave sch">
-        <div class="sch-tabs" role="tablist" aria-label="Schematic sheet">
-          <button type="button" role="tab" aria-selected="true" data-src="images/cev_sch_top.svg">top level</button>
-          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_mcu.svg">RP2040 + USB</button>
-          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_can.svg">CAN FD</button>
-          <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_buck.svg">60 V buck</button>
+      <details class="more">
+        <summary><span><b>Details</b> · board specs, schematic sheets</span></summary>
+        <div class="more-body">
+          <h4>More of the design</h4>
+          <ul>
+            <li>Six Mini-Fit sensor inputs and the power/CAN connector flush with the board edges on a <b>114.3 × 66 mm</b>, 4-layer board</li>
+            <li>USB-C for flashing and power, with an RP2040 boot flash, 12 MHz crystal, and BOOTSEL/RUN buttons</li>
+          </ul>
+          <figure class="wave sch">
+            <div class="sch-tabs" role="tablist" aria-label="Schematic sheet">
+              <button type="button" role="tab" aria-selected="true" data-src="images/cev_sch_top.svg">top level</button>
+              <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_mcu.svg">RP2040 + USB</button>
+              <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_can.svg">CAN FD</button>
+              <button type="button" role="tab" aria-selected="false" data-src="images/cev_sch_buck.svg">60 V buck</button>
+            </div>
+            <a class="scroll" href="images/cev_sch_top.svg" target="_blank" rel="noopener"><img src="images/cev_sch_top.svg" alt="CEV dashboard schematic, top-level sheet" width="1223" height="792" loading="lazy" decoding="async" /></a>
+            <figcaption><b>Schematic</b> · pick a sheet above; click it to open full size, or grab the <a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">PDF</a></figcaption>
+          </figure>
         </div>
-        <a href="images/cev_sch_top.svg" target="_blank" rel="noopener"><img src="images/cev_sch_top.svg" alt="CEV dashboard schematic, top-level sheet" loading="lazy" /></a>
-        <figcaption><b>Schematic</b> · pick a sheet above; click it to open full size, or grab the <a href="images/cev_dashboard_schematic.pdf" target="_blank" rel="noopener">PDF</a></figcaption>
-      </figure>
+      </details>
     </article>
 
     <!-- ─────────────── U5: SLAM ─────────────── -->
-    <article class="project reveal">
+    <article class="project reveal" id="sliding-window-slam">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U5</span>Robotics · Cornell Electric Vehicles · 2026</div>
-          <h3>Sliding-Window Pose-Graph SLAM</h3>
-          <p>The localization backend for CEV's autonomous car. It takes fused LiDAR + IMU odometry and LiDAR scans, optimizes a pose graph over the last 20 keyframes, and publishes the drift correction as <code>map → odom</code>. Old keyframes aren't deleted: they're marginalized into a prior, and then kept in an archive for loop closure, so cost per keyframe stays flat however long the car drives.</p>
+          <div class="part"><span class="ref">U5</span>Robotics · Cornell Electric Vehicles · 2026<button class="copy" type="button" data-id="sliding-window-slam" aria-label="Copy link to Sliding-Window Pose-Graph SLAM">copy link</button></div>
+          <h3><a class="anchor" href="#sliding-window-slam">Sliding-Window Pose-Graph SLAM</a></h3>
+          <ul class="status" aria-label="Implementation status">
+            <li class="ok"><b>Simulation</b> · end-to-end test passing</li>
+            <li class="ok"><b>ROS 2 node</b> · smoke test passing</li>
+            <li class="wip"><b>Real-car validation</b> · open</li>
+          </ul>
+          <p>The localization backend for CEV's autonomous car. It optimizes a pose graph over the last 20 keyframes of fused LiDAR + IMU odometry and LiDAR scans, and publishes the drift correction as <code>map → odom</code>. Old keyframes are marginalized into a prior, so cost per keyframe stays flat however long the car drives.</p>
+          <p class="mine"><b>My part</b>Rewrote the backend so it actually corrects drift: scan-matching and loop-closure constraints, Schur-complement marginalization, an SE(2) fix for <code>map → odom</code>, and the simulation test.</p>
           <ul class="proof">
-            <li>In a 2-lap (~115 m) simulation with drifting odometry, trajectory error drops from <b>3.09 m</b> (raw odometry) to <b>0.12 m</b>, about 25× less</li>
-            <li>Real marginalization via the <b>Schur complement</b>: within <b>0.2 mm</b> of the full-batch solution, vs. <b>0.19 m</b> for the old drop-and-pin approach</li>
-            <li>Every keyframe gets ICP scan-matching edges inside the window plus <b>loop-closure</b> edges to the archive, each verified independently (≥ 60% inliers within 15 cm)</li>
-            <li>Levenberg–Marquardt with a <b>Huber</b> kernel for bad matches; about <b>2 ms per keyframe</b> from the first lap to the last</li>
-            <li>Fixed a real SE(2) bug in <code>map → odom</code> (component subtraction was <b>0.94 m</b> off at 90° heading) and timed keyframes to scan stamps with interpolated odometry</li>
+            <li>In a 2-lap (~115 m) <em>simulation</em> with drifting odometry, trajectory error drops from <b>3.09 m</b> (raw odometry) to <b>0.12 m</b>. <a class="ev" href="https://github.com/cornellev/SLAMv2/tree/main/src/cev_pose_graph_slam#3-evidence" target="_blank" rel="noopener">results ↗</a></li>
+            <li>Real marginalization via the <b>Schur complement</b>: within <b>0.2 mm</b> of the full-batch solution in simulation, vs. <b>0.19 m</b> for the old drop-and-pin approach. <a class="ev" href="https://github.com/cornellev/SLAMv2/blob/main/src/cev_pose_graph_slam/test/sim_test.cpp" target="_blank" rel="noopener">sim_test.cpp ↗</a></li>
+            <li>About <b>2 ms per keyframe</b> from the first lap to the last in the same simulation.</li>
           </ul>
           <div class="chips"><span>C++17</span><span>ROS 2</span><span>Eigen</span><span>ICP</span><span>LiDAR</span><span>IMU</span></div>
           <div class="links">
-            <a href="https://github.com/cornellev/SLAM-sliding-window/tree/fix/sliding-window-slam/src/cev_pose_graph_slam" target="_blank" rel="noopener">cornellev/SLAM-sliding-window ↗</a>
-            <a href="https://github.com/cornellev/SLAM-sliding-window/blob/fix/sliding-window-slam/src/cev_pose_graph_slam/src/sliding_window_pgo.cpp" target="_blank" rel="noopener">sliding_window_pgo.cpp ↗</a>
-            <a href="https://github.com/cornellev/SLAM-sliding-window/commit/cea050f7de82595b58c61600791d81bbf52ab505" target="_blank" rel="noopener">the commit ↗</a>
-            <a href="https://github.com/cornellev/SLAMv2" target="_blank" rel="noopener">cornellev/SLAMv2 ↗</a>
+            <a class="repo" href="https://github.com/cornellev/SLAMv2/tree/main/src/cev_pose_graph_slam" target="_blank" rel="noopener">cornellev/SLAMv2 ↗</a>
+            <a href="https://github.com/cornellev/SLAMv2/commit/cea050f7de82595b58c61600791d81bbf52ab505" target="_blank" rel="noopener">the commit ↗</a>
           </div>
         </div>
         <div class="project-media">
           <figure class="shot contain">
-            <img src="images/slam_sim_result.svg" alt="Simulated trajectories: ground truth, raw odometry, old backend, and the new sliding-window backend" onerror="this.parentElement.classList.add('empty')" />
+            <img src="images/slam_sim_result.svg" alt="Simulated trajectories: ground truth, raw odometry, old backend, and the new sliding-window backend" width="780" height="600" loading="lazy" decoding="async" />
             <figcaption>2-lap simulation: green (new, marginalization + loop closure) tracks ground truth; red is raw odometry</figcaption>
           </figure>
           <figure class="shot">
-            <img src="images/slam_vis.jpg" alt="LiDAR point cloud and pose graph in RViz" onerror="this.parentElement.classList.add('empty')" />
+            <img src="images/slam_vis.jpg" alt="LiDAR point cloud and pose graph in RViz" width="891" height="891" loading="lazy" decoding="async" />
             <figcaption>LiDAR map and pose estimates in RViz</figcaption>
           </figure>
         </div>
       </div>
+      <details class="more">
+        <summary><span><b>Details</b> · method, bugs fixed, what's still open</span></summary>
+        <div class="more-body">
+          <h4>Method</h4>
+          <ul>
+            <li>Every keyframe gets ICP scan-matching edges inside the window plus <b>loop-closure</b> edges to archived keyframes, each verified independently (≥ 60% inliers within 15 cm).</li>
+            <li>Levenberg–Marquardt with a <b>Huber</b> kernel on scan and loop edges to limit bad matches.</li>
+            <li>Marginalized keyframes go to an archive with their final pose and scan, so loop closure still works after they leave the window.</li>
+          </ul>
+          <h4>Bugs fixed in the old backend</h4>
+          <ul>
+            <li><code>map → odom</code> subtracted pose components instead of composing SE(2) transforms: <b>0.94 m</b> off at 90° heading in the test case.</li>
+            <li>Keyframes were paired with "the latest scan"; they are now timed to scan stamps with interpolated odometry, which took a 2.8° false rotation in the ROS smoke test down to 0.02–0.35°.</li>
+          </ul>
+          <h4>Simulation results</h4>
+          <div class="tbl"><table>
+            <thead><tr><th>Backend</th><th>ATE (m)</th><th>ms / keyframe, last 50</th></tr></thead>
+            <tbody>
+              <tr><td>Raw odometry</td><td>3.089</td><td>n/a</td></tr>
+              <tr><td>Old backend</td><td>2.869</td><td>n/a</td></tr>
+              <tr><td>New, no loop closure</td><td>0.285</td><td>1.9</td></tr>
+              <tr><td>New, truncation + loops</td><td>0.239</td><td>2.8</td></tr>
+              <tr><td>New, marginalization + loops</td><td>0.121</td><td>2.5</td></tr>
+            </tbody>
+          </table></div>
+          <p>Simulated car: two laps of a 5 m-wide corridor loop, 360-beam LiDAR with 1 cm noise, odometry with 2% scale error and a +0.25°/m heading bias, using the team's real ICP library. The ROS smoke test uses perfect odometry and checks the node end to end. The number that matters most, drift on a real closed-loop bag from the car, is still open.</p>
+          <pre class="cmd">cmake -S src/cev_pose_graph_slam -B build/pgo_core -DPGO_CORE_ONLY=ON
+cmake --build build/pgo_core -j
+./build/pgo_core/pgo_sim_test</pre>
+        </div>
+      </details>
       <details class="code">
         <summary><span class="file">&lt;/&gt; <b>src/cev_pose_graph_slam/src/sliding_window_pgo.cpp</b></span></summary>
         <pre><code class="language-cpp">void SlidingWindowPGO::marginalizeOldest() {
@@ -646,31 +905,31 @@ void SlidingWindowPGO::updateMapToOdom() {
       </details>
     </article>
 
-    <!-- ─────────────── U6: Polymer GNN ─────────────── -->
-    <article class="project reveal">
-      <div class="project-top">
-        <div class="project-info">
-          <div class="part"><span class="ref">U6</span>ML · Materials · Jun – Aug 2025</div>
-          <h3>Polymer Property Prediction with GNNs</h3>
-          <p>For the NeurIPS Open Polymer Challenge: predict five properties (glass transition temperature, free volume, crystallization temperature, density, radius of gyration) straight from a polymer's SMILES string. Molecules become graphs; a GCN learns from atoms and bonds.</p>
-          <ul class="proof">
-            <li>Trained on <b>7,973</b> polymers with sparse labels, masking missing targets in the loss</li>
-            <li>Ensembled LSTM + GNN + random forest; dev-test MSE <b>163.8</b> (RF) and <b>169.5</b> (GNN) vs. 240.5 (LSTM)</li>
-            <li>Ran LAMMPS molecular dynamics to generate extra data and benchmark the models</li>
-          </ul>
-          <div class="chips"><span>PyTorch Geometric</span><span>RDKit</span><span>LAMMPS</span><span>Optuna</span></div>
-          <div class="links"><a href="https://github.com/IshaanParikh/Polymer-prediction" target="_blank" rel="noopener">IshaanParikh/Polymer-prediction ↗</a></div>
+    <h3 class="subhead">Earlier ML projects</h3>
+    <div class="compact-grid">
+
+      <!-- ─────────────── U6: Polymer GNN ─────────────── -->
+      <article class="project compact reveal" id="polymer-gnn">
+        <div class="project-top">
+          <div class="project-info">
+            <div class="part"><span class="ref">U6</span>ML · Jun – Aug 2025<button class="copy" type="button" data-id="polymer-gnn" aria-label="Copy link to Polymer Property Prediction">copy link</button></div>
+            <h3><a class="anchor" href="#polymer-gnn">Polymer Property Prediction with GNNs</a></h3>
+            <p>NeurIPS Open Polymer Challenge: predict five properties from a polymer's SMILES string with a graph network over atoms and bonds.</p>
+            <ul class="proof">
+              <li>Ensembled LSTM + GNN + random forest on <b>7,973</b> sparsely labeled polymers; dev-test MSE <b>163.8</b> (RF), <b>169.5</b> (GNN), 240.5 (LSTM)</li>
+              <li>Ran LAMMPS molecular dynamics for extra data</li>
+            </ul>
+            <div class="links"><a href="https://github.com/IshaanParikh/Polymer-prediction" target="_blank" rel="noopener">IshaanParikh/Polymer-prediction ↗</a></div>
+          </div>
+          <div class="project-media">
+            <figure class="shot contain">
+              <img src="images/polymer.jpg" alt="LAMMPS simulation of polymer chains on a substrate" width="451" height="606" loading="lazy" decoding="async" />
+            </figure>
+          </div>
         </div>
-        <div class="project-media">
-          <figure class="shot contain">
-            <img src="images/polymer.jpg" alt="LAMMPS polymer simulation" onerror="this.parentElement.classList.add('empty')" />
-            <figcaption>LAMMPS simulation of polymer chains on a substrate</figcaption>
-          </figure>
-        </div>
-      </div>
-      <details class="code">
-        <summary><span class="file">&lt;/&gt; <b>GNN_Polymer_Prediction_All.ipynb</b></span></summary>
-        <pre><code class="language-python">def smiles_to_graph(smiles, y):
+        <details class="code">
+          <summary><span class="file">&lt;/&gt; <b>GNN_Polymer_Prediction_All.ipynb</b></span></summary>
+          <pre><code class="language-python">def smiles_to_graph(smiles, y):
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         return None
@@ -697,34 +956,31 @@ class GNNRegressor(nn.Module):
         x = torch.relu(self.conv2(x, data.edge_index))
         x = global_mean_pool(x, data.batch)
         return self.lin2(torch.relu(self.lin1(x)))</code></pre>
-      </details>
-    </article>
+        </details>
+      </article>
 
-    <!-- ─────────────── U7: X-ray ─────────────── -->
-    <article class="project reveal">
-      <div class="project-top">
-        <div class="project-info">
-          <div class="part"><span class="ref">U7</span>ML · Medical imaging · Kaggle</div>
-          <h3>Chest X-ray COVID-19 / Pneumonia Detection</h3>
-          <p>A two-stage pipeline for the SIIM-COVID19 Kaggle competition. YOLOv5 finds and boxes lung opacities in each image; an ensemble of CNNs classifies the whole study as negative, typical, indeterminate, or atypical.</p>
-          <ul class="proof">
-            <li>DICOM decoding with <b>VOI LUT</b> windowing and MONOCHROME1 inversion so every scan reads the same way</li>
-            <li>Rescaled YOLO boxes from 512 px back to each original DICOM's dimensions</li>
-            <li>Averaged predictions across ensemble members and across every image in a study</li>
-          </ul>
-          <div class="chips"><span>YOLOv5</span><span>TensorFlow</span><span>PyTorch</span><span>pydicom</span></div>
-          <div class="links"><a href="https://github.com/IshaanParikh/Xray-pneumonia-detection" target="_blank" rel="noopener">IshaanParikh/Xray-pneumonia-detection ↗</a></div>
+      <!-- ─────────────── U7: X-ray ─────────────── -->
+      <article class="project compact reveal" id="xray-detection">
+        <div class="project-top">
+          <div class="project-info">
+            <div class="part"><span class="ref">U7</span>ML · Kaggle<button class="copy" type="button" data-id="xray-detection" aria-label="Copy link to Chest X-ray Detection">copy link</button></div>
+            <h3><a class="anchor" href="#xray-detection">Chest X-ray COVID-19 / Pneumonia Detection</a></h3>
+            <p>SIIM-COVID19 Kaggle pipeline: YOLOv5 boxes lung opacities, then a CNN ensemble classifies each study.</p>
+            <ul class="proof">
+              <li>DICOM decoding with <b>VOI LUT</b> windowing and MONOCHROME1 inversion so every scan reads the same way</li>
+              <li>Averaged predictions across ensemble members and every image in a study</li>
+            </ul>
+            <div class="links"><a href="https://github.com/IshaanParikh/Xray-pneumonia-detection" target="_blank" rel="noopener">IshaanParikh/Xray-pneumonia-detection ↗</a></div>
+          </div>
+          <div class="project-media">
+            <figure class="shot contain">
+              <img src="images/xray.jpg" alt="Chest X-ray with predicted (red) and ground-truth (green) opacity boxes" width="434" height="434" loading="lazy" decoding="async" />
+            </figure>
+          </div>
         </div>
-        <div class="project-media">
-          <figure class="shot contain">
-            <img src="images/xray.jpg" alt="Chest X-ray with predicted opacity boxes" onerror="this.parentElement.classList.add('empty')" />
-            <figcaption>Predicted (red) vs. ground-truth (green) opacity boxes</figcaption>
-          </figure>
-        </div>
-      </div>
-      <details class="code">
-        <summary><span class="file">&lt;/&gt; <b>submission-ishaan.ipynb</b></span></summary>
-        <pre><code class="language-python"># YOLOv5 returns x_center, y_center, width, height; Kaggle wants corners
+        <details class="code">
+          <summary><span class="file">&lt;/&gt; <b>submission-ishaan.ipynb</b></span></summary>
+          <pre><code class="language-python"># YOLOv5 returns x_center, y_center, width, height; Kaggle wants corners
 def correct_bbox_format(bboxes):
     correct_bboxes = []
     for b in bboxes:
@@ -746,70 +1002,30 @@ for model in study_models:
     predictions.append(tmp)
     del model; gc.collect()
 predictions = np.mean(predictions, axis=0)   # ...then across images per study</code></pre>
-      </details>
-    </article>
-
-    <!-- ─────────────── U8: Tils (HIDDEN: private for now; delete the "hidden" attribute to show it) ─────────────── -->
-    <article class="project reveal" hidden>
-      <div class="project-top">
-        <div class="project-info">
-          <div class="part"><span class="ref">U8</span>Side project · Web · Fall 2026</div>
-          <h3>Tils: rank movies by gut</h3>
-          <p>"List" backwards. Instead of star ratings, you answer <em>this or that?</em> and every pick updates both your personal ranking and a global Elo for the title. It's a browser prototype with a Wikidata-backed catalog.</p>
-          <ul class="proof">
-            <li>Elo with draws (<b>K = 24</b>) for "too close to call"; your list rescales to a 0–10 score</li>
-            <li>Pair picker introduces new titles early, then pits close-rated titles so the list settles fast</li>
-            <li>Ranking logic is pure and unit-tested with <b>node:test</b></li>
-          </ul>
-          <div class="chips"><span>JavaScript</span><span>Vite</span><span>Elo</span></div>
-          <!-- TODO(Ishaan): once the repo is public or deployed, swap this for a real link. -->
-          <div class="links"><span class="private">repo private for now</span></div>
-        </div>
-      </div>
-      <details class="code">
-        <summary><span class="file">&lt;/&gt; <b>src/core.js</b></span></summary>
-        <pre><code class="language-javascript">export const K = 24;
-export const START = 1500;
-
-export function expected(a, b) {
-  return 1 / (1 + 10 ** ((b - a) / 400));
-}
-
-// result is 1 if a wins, 0 if b wins, 0.5 for a draw ("too close to call").
-export function eloUpdate(a, b, result = 1, k = K) {
-  const delta = k * (result - expected(a, b));
-  return [a + delta, b - delta];
-}
-
-// Score 0-10: rank sets the spread, so your favorite is always 10.
-export function listScores(list) {
-  const n = list.length;
-  return Object.fromEntries(list.map((id, i) =&gt;
-    [id, Math.round((10 - (8 * i) / Math.max(n - 1, 1)) * 10) / 10]));
-}</code></pre>
-      </details>
-    </article>
+        </details>
+      </article>
+    </div>
 
     <!-- ─────────────── TEMPLATE: copy this block to add a project ───────────────
-    <article class="project reveal">
+    <article class="project reveal" id="short-stable-id">
       <div class="project-top">
         <div class="project-info">
-          <div class="part"><span class="ref">U9</span>Category · Month Year – now</div>
-          <h3>Project name</h3>
-          <p>What it is and why it's interesting, in two sentences.</p>
-          <ul class="proof">
-            <li>A result with a <b>number</b></li>
+          <div class="part"><span class="ref">U8</span>Category · Month Year – now<button class="copy" type="button" data-id="short-stable-id" aria-label="Copy link to Project name">copy link</button></div>
+          <h3><a class="anchor" href="#short-stable-id">Project name</a></h3>
+          <ul class="status" aria-label="Implementation status">
+            <li class="ok"><b>RTL simulation</b> · passing</li>
+            <li class="no"><b>Synthesis</b> · not yet</li>
           </ul>
-          <div class="chips"><span>Tool</span><span>Tool</span></div>
-          <div class="links"><a href="https://github.com/..." target="_blank" rel="noopener">repo ↗</a></div>
-        </div>
-        <div class="project-media">
-          <figure class="shot">
-            <img src="images/new_project.jpg" alt="" onerror="this.parentElement.classList.add('empty')" />
-            <div class="slot"><strong>PHOTO SLOT</strong>What goes here<code>images/new_project.jpg</code></div>
-          </figure>
+          <p>What it is, in two sentences.</p>
+          <p class="mine"><b>My part</b>What I personally did.</p>
+          <ul class="proof">
+            <li>A result with a <b>number</b> <a class="ev" href="https://github.com/...">evidence ↗</a></li>
+          </ul>
+          <div class="chips"><span>Tool</span></div>
+          <div class="links"><a class="repo" href="https://github.com/..." target="_blank" rel="noopener">repo ↗</a></div>
         </div>
       </div>
+      <details class="more"><summary><span><b>Details</b> · ...</span></summary><div class="more-body">...</div></details>
     </article>
     ──────────────────────────────────────────────────────────────────────────── -->
   </div>
@@ -846,9 +1062,9 @@ export function listScores(list) {
         <div class="xp-media">
           <figure class="shot">
             <div class="player">
-              <video src="images/waveguide_alignment_v2.mp4" poster="images/waveguide_alignment_v2_poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Top-view camera footage of fiber-to-waveguide alignment on a loss test structure"></video>
+              <video src="images/waveguide_alignment_v2.mp4" poster="images/waveguide_alignment_v2_poster.jpg" muted loop playsinline controls preload="none" aria-label="Top-view camera footage of fiber-to-waveguide alignment on a loss test structure"></video>
               <div class="bar">
-                <button type="button" class="pp" aria-label="Pause">❚❚</button>
+                <button type="button" class="pp" aria-label="Play">▶</button>
                 <input class="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" />
                 <span class="time">0:00 / 2:03</span>
                 <div class="speeds" role="group" aria-label="Playback speed">
@@ -863,7 +1079,7 @@ export function listScores(list) {
             <figcaption>Live alignment, top view of the loss structures (fluorescence camera, real-time capture)</figcaption>
           </figure>
           <figure class="shot contain">
-            <img src="images/quantum_focus_curve.png" alt="Autofocus sharpness curve, coarse and fine sweeps" onerror="this.parentElement.classList.add('empty')" />
+            <img src="images/quantum_focus_curve.png" alt="Autofocus sharpness curve, coarse and fine sweeps" width="1200" height="480" loading="lazy" decoding="async" />
             <figcaption>Autofocus: coarse then fine z-sweep of image sharpness</figcaption>
           </figure>
         </div>
@@ -899,13 +1115,13 @@ export function listScores(list) {
         <div class="org">Cornell Electric Vehicles · 70-member project team</div>
         <ul>
           <li>Built the <b>Rust integration layer</b> that ties perception, localization, mapping, and planning together</li>
-          <li>Developed the C++ pose-graph SLAM backend (see <a href="#projects">U5</a>) and now the FPGA accelerator (<a href="#projects">U1</a>)</li>
+          <li>Developed the C++ pose-graph SLAM backend (see <a href="#sliding-window-slam">U5</a>) and the Winograd unit for the FPGA accelerator (<a href="#cnn-accelerator">U1</a>)</li>
           <li>Wrote RP2040 C++ firmware that turns UART commands into <b>PWM</b> for motor and steering control</li>
-          <li>Designed a 4-layer, 6-input <b>CAN dashboard PCB</b> in Altium (see <a href="#projects">U4</a>) and a reusable <b>60 V-input buck converter</b>; brought boards up with scopes and DMMs</li>
+          <li>Designed a 4-layer, 6-input <b>CAN dashboard PCB</b> in Altium (see <a href="#can-dashboard-pcb">U4</a>) and a reusable <b>60 V-input buck converter</b>; brought boards up with scopes and DMMs</li>
         </ul>
         <div class="xp-media">
           <figure class="shot">
-            <img src="images/slam_desk.jpg" alt="Workbench with laptop running the SLAM stack" onerror="this.parentElement.classList.add('empty')" />
+            <img src="images/slam_desk.jpg" alt="Workbench with laptop running the SLAM stack" width="1200" height="900" loading="lazy" decoding="async" />
             <figcaption>SLAM bring-up on the bench</figcaption>
           </figure>
         </div>
@@ -923,11 +1139,11 @@ export function listScores(list) {
         </ul>
         <div class="xp-media">
           <figure class="shot">
-            <img src="images/weld.jpg" alt="Laser-welded busbar on a battery cell" onerror="this.parentElement.classList.add('empty')" />
+            <img src="images/weld.jpg" alt="Laser-welded busbar on a battery cell" width="800" height="1067" loading="lazy" decoding="async" />
             <figcaption>A laser-welded busbar joint</figcaption>
           </figure>
           <figure class="shot">
-            <img src="images/matter.jpg" alt="At Matter with the electric motorcycle" onerror="this.parentElement.classList.add('empty')" />
+            <img src="images/matter.jpg" alt="At Matter with the electric motorcycle" width="740" height="555" loading="lazy" decoding="async" />
             <figcaption>With Matter's electric motorcycle</figcaption>
           </figure>
         </div>
@@ -975,6 +1191,7 @@ export function listScores(list) {
     </div>
   </div>
 </section>
+</main>
 
 <footer>
   <div class="wrap">
@@ -983,78 +1200,177 @@ export function listScores(list) {
   </div>
 </footer>
 
-<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/verilog.min.js"></script>
+<p class="sr-only" id="live" aria-live="polite"></p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/verilog.min.js" defer></script>
 <script>
-  if (window.hljs) hljs.highlightAll();
+  // Each feature runs on its own, so one failure can't take the others (or the content) down.
+  const run = fn => { try { fn(); } catch (e) { console.error(e); } };
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Image slots whose file failed before this script ran
-  document.querySelectorAll('.shot img').forEach(img => {
-    if (img.complete && img.naturalWidth === 0) img.parentElement.classList.add('empty');
-  });
-
-  // video players: play/pause, scrub, speed, loop indicator
-  document.querySelectorAll('.player').forEach(p => {
-    const v = p.querySelector('video'), pp = p.querySelector('.pp'),
-          seek = p.querySelector('.seek'), time = p.querySelector('.time'),
-          loop = p.querySelector('.loop'), rates = p.querySelectorAll('.speeds button');
-    const fmt = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
-    let last = 0, scrubbing = false, wasPlaying = false;
-    const setRate = r => {
-      v.playbackRate = r;
-      rates.forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.rate === r)));
-    };
-    const sync = () => {
-      pp.textContent = v.paused ? '▶' : '❚❚';
-      pp.setAttribute('aria-label', v.paused ? 'Play' : 'Pause');
-    };
-    const show = () => {
-      if (!v.duration) return;
-      if (!scrubbing) seek.value = Math.round(1000 * v.currentTime / v.duration);
-      time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
-    };
-    v.addEventListener('loadedmetadata', () => { setRate(4); show(); });
-    // timeupdate only fires ~4x a second, which lags badly at 8x, so
-    // redraw every animation frame while playing
-    const tick = () => {
-      show();
-      if (!scrubbing && v.currentTime < last - 1) { loop.classList.remove('pulse'); void loop.offsetWidth; loop.classList.add('pulse'); }
-      last = v.currentTime;
-      if (!v.paused) requestAnimationFrame(tick);
-    };
-    v.addEventListener('play', () => requestAnimationFrame(tick));
-    v.addEventListener('timeupdate', show);
-    v.addEventListener('seeked', show);
-    v.addEventListener('play', sync); v.addEventListener('pause', sync);
-    pp.addEventListener('click', () => v.paused ? v.play() : v.pause());
-    v.addEventListener('click', () => v.paused ? v.play() : v.pause());
-    rates.forEach(b => b.addEventListener('click', () => setRate(+b.dataset.rate)));
-    seek.addEventListener('pointerdown', () => { scrubbing = true; wasPlaying = !v.paused; v.pause(); });
-    seek.addEventListener('input', () => {
-      if (v.duration) { v.currentTime = v.duration * seek.value / 1000; last = v.currentTime; time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration); }
+  // reveal on scroll: content stays visible unless the observer is actually running
+  run(() => {
+    if (!('IntersectionObserver' in window) || reduceMotion) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => {
+      // anything already on screen (or the linked card) shows immediately
+      const r = el.getBoundingClientRect();
+      if (r.top < innerHeight && r.bottom > 0) el.classList.add('in');
+      else io.observe(el);
     });
-    seek.addEventListener('change', () => { scrubbing = false; if (wasPlaying) v.play(); wasPlaying = false; });
-    if (v.readyState >= 1) { setRate(4); show(); }
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.pause();
-    if (!v.paused) requestAnimationFrame(tick);
-    sync();
+    document.documentElement.classList.add('reveal-on');
+  });
+  // a #link to a project should never land on a hidden (still offset) card,
+  // so reveal the target before the browser scrolls to it
+  const revealTarget = hash => run(() => {
+    const t = hash && hash.length > 1 && document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (t) { t.classList.add('in'); t.closest('.reveal')?.classList.add('in'); }
+  });
+  revealTarget(location.hash);
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a) revealTarget(a.getAttribute('href'));
+  });
+  addEventListener('hashchange', () => revealTarget(location.hash));
+
+  // syntax highlighting, once the deferred library has loaded
+  addEventListener('DOMContentLoaded', () => run(() => { if (window.hljs) hljs.highlightAll(); }));
+
+  // missing image files collapse to their caption
+  run(() => {
+    document.querySelectorAll('.shot img').forEach(img => {
+      const mark = () => img.closest('figure').classList.add('empty');
+      img.addEventListener('error', mark);
+      if (img.complete && img.naturalWidth === 0 && img.getAttribute('loading') !== 'lazy') mark();
+    });
   });
 
-  // schematic sheet tabs
-  document.querySelectorAll('.sch').forEach(fig => {
-    const img = fig.querySelector('img'), link = img.parentElement, tabs = fig.querySelectorAll('.sch-tabs button');
-    tabs.forEach(b => b.addEventListener('click', () => {
-      tabs.forEach(t => t.setAttribute('aria-selected', String(t === b)));
-      img.src = link.href = b.dataset.src;
-      img.alt = 'CEV dashboard schematic, ' + b.textContent + ' sheet';
+  // copy project link
+  run(() => {
+    const live = document.getElementById('live');
+    const copyText = async text => {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove();
+      if (!ok) throw new Error('copy failed');
+    };
+    document.querySelectorAll('.copy').forEach(b => b.addEventListener('click', async () => {
+      const url = location.origin + location.pathname + '#' + b.dataset.id;
+      try {
+        await copyText(url);
+        b.textContent = 'copied ✓'; b.classList.add('done'); live.textContent = 'Link copied';
+      } catch {
+        history.replaceState(null, '', '#' + b.dataset.id);
+        b.textContent = 'link in address bar'; live.textContent = 'Link is in the address bar';
+      }
+      setTimeout(() => { b.textContent = 'copy link'; b.classList.remove('done'); }, 1800);
     }));
   });
 
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // video player: plays only while on screen; play/pause, scrub, speed, loop indicator
+  run(() => {
+    document.querySelectorAll('.player').forEach(p => {
+      const v = p.querySelector('video'), pp = p.querySelector('.pp'),
+            seek = p.querySelector('.seek'), time = p.querySelector('.time'),
+            loop = p.querySelector('.loop'), rates = p.querySelectorAll('.speeds button');
+      const fmt = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+      let last = 0, scrubbing = false, wasPlaying = false, rate = 4, userPaused = reduceMotion;
+      v.removeAttribute('controls');
+      p.classList.add('ready');
+      const setRate = r => {
+        rate = r; v.playbackRate = r;
+        rates.forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.rate === r)));
+      };
+      const sync = () => {
+        pp.textContent = v.paused ? '▶' : '❚❚';
+        pp.setAttribute('aria-label', v.paused ? 'Play' : 'Pause');
+      };
+      const show = () => {
+        if (!v.duration) return;
+        if (!scrubbing) seek.value = Math.round(1000 * v.currentTime / v.duration);
+        time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
+      };
+      v.addEventListener('loadedmetadata', () => { setRate(rate); show(); });
+      // timeupdate only fires ~4x a second, which lags badly at 8x, so
+      // redraw every animation frame while playing
+      const tick = () => {
+        show();
+        if (!scrubbing && v.currentTime < last - 1) { loop.classList.remove('pulse'); void loop.offsetWidth; loop.classList.add('pulse'); }
+        last = v.currentTime;
+        if (!v.paused) requestAnimationFrame(tick);
+      };
+      const play = () => { v.playbackRate = rate; v.play().catch(() => {}); };
+      v.addEventListener('play', () => requestAnimationFrame(tick));
+      v.addEventListener('timeupdate', show);
+      v.addEventListener('seeked', show);
+      v.addEventListener('play', sync); v.addEventListener('pause', sync);
+      const toggle = () => { if (v.paused) { userPaused = false; play(); } else { userPaused = true; v.pause(); } };
+      pp.addEventListener('click', toggle);
+      v.addEventListener('click', toggle);
+      rates.forEach(b => b.addEventListener('click', () => setRate(+b.dataset.rate)));
+      seek.addEventListener('pointerdown', () => { scrubbing = true; wasPlaying = !v.paused; v.pause(); });
+      seek.addEventListener('input', () => {
+        if (v.duration) { v.currentTime = v.duration * seek.value / 1000; last = v.currentTime; time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration); }
+      });
+      seek.addEventListener('change', () => { scrubbing = false; if (wasPlaying) play(); wasPlaying = false; });
+      // start loading and playing only when the video scrolls into view
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(([e]) => {
+          if (e.isIntersecting) { if (v.preload === 'none') v.preload = 'metadata'; if (!userPaused) play(); }
+          else if (!v.paused) v.pause();
+        }, { threshold: 0.25 }).observe(v);
+      }
+      sync();
+    });
+  });
+
+  // schematic sheet tabs (arrow keys move between sheets)
+  run(() => {
+    document.querySelectorAll('.sch').forEach(fig => {
+      const img = fig.querySelector('img'), link = img.parentElement, tabs = [...fig.querySelectorAll('.sch-tabs button')];
+      const select = b => {
+        tabs.forEach(t => { t.setAttribute('aria-selected', String(t === b)); t.tabIndex = t === b ? 0 : -1; });
+        img.src = link.href = b.dataset.src;
+        img.alt = 'CEV dashboard schematic, ' + b.textContent + ' sheet';
+      };
+      tabs.forEach((b, i) => {
+        b.tabIndex = b.getAttribute('aria-selected') === 'true' ? 0 : -1;
+        b.addEventListener('click', () => select(b));
+        b.addEventListener('keydown', e => {
+          const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+          if (!d) return;
+          const n = tabs[(i + d + tabs.length) % tabs.length];
+          select(n); n.focus(); e.preventDefault();
+        });
+      });
+    });
+  });
+
+  // 3D board viewer: the 8 MB model and its library only load when asked for
+  run(() => {
+    document.querySelectorAll('.load3d').forEach(btn => btn.addEventListener('click', () => {
+      const slot = btn.closest('.viewer-slot'), msg = slot.querySelector('.viewer-msg');
+      btn.disabled = true; btn.textContent = 'loading 3D model…';
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.src = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js';
+      s.onerror = () => { btn.textContent = 'couldn’t load the 3D viewer'; msg.innerHTML = 'Try the <a href="images/cev_dashboard.glb" download>.glb download</a> instead.'; };
+      document.head.appendChild(s);
+      const mv = document.createElement('model-viewer');
+      Object.entries({
+        src: 'images/cev_dashboard.glb', alt: '3D model of the CEV dashboard PCB',
+        'camera-controls': '', 'interaction-prompt': 'none', 'shadow-intensity': '0.6', exposure: '1.05',
+        orientation: '0deg -90deg 0deg', 'camera-orbit': '30deg 60deg 95%', 'touch-action': 'pan-y'
+      }).forEach(([k, val]) => mv.setAttribute(k, val));
+      if (!reduceMotion) { mv.setAttribute('auto-rotate', ''); mv.setAttribute('auto-rotate-delay', '0'); mv.setAttribute('rotation-per-second', '18deg'); }
+      customElements.whenDefined('model-viewer').then(() => { slot.replaceWith(mv); mv.focus?.(); });
+    }));
+  });
 </script>
 </body>
 </html>
