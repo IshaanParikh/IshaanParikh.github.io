@@ -417,7 +417,7 @@
   If the file is missing, the figure collapses to its caption. See images/README.md.
 
   STATUS PILLS (on each project)
-  ok = done and evidenced, wip = in progress, no = not started / not yet shown.
+  ok = done (link evidence where it exists), wip = in progress, no = not started / not yet shown.
   Only mark something ok when a test, report, or doc in the linked repo backs it.
 -->
 
@@ -472,7 +472,7 @@
     <div class="sec-head"><span class="sec-num">01</span><h2>Projects</h2></div>
     <p class="sec-sub">Each card leads with what I built and the results that matter, with a link to the test or report behind each number. Expand a card for the methodology, supporting math, and code.</p>
     <ul class="legend" aria-label="Status legend">
-      <li class="ok">done, with evidence linked</li>
+      <li class="ok">done</li>
       <li class="wip">in progress</li>
       <li class="no">not yet</li>
     </ul>
@@ -489,7 +489,7 @@
             <li class="no"><b>Synthesis &amp; board</b> · not yet</li>
           </ul>
           <p>CEV is building an FPGA accelerator for INT8 inference on its lane-segmentation network, prototyping on MNIST first. The Winograd unit is a drop-in alternative to the direct 3×3 convolution block; it is not yet wired into the accelerator datapath.</p>
-          <p class="mine"><b>My part</b>The arithmetic. I designed, wrote, and verified the Winograd F(2×2, 3×3) unit in SystemVerilog, with its testbench and Python reference model.</p>
+          <p class="mine"><b>My part</b>The arithmetic. I specified the INT8 datapath math, sized the network's compute and memory, drafted the layer-sequencing FSM, and designed, wrote, and verified the Winograd F(2×2, 3×3) unit with its testbench and Python reference model.</p>
           <ul class="proof">
             <li><b>16 multiplies</b> per 2×2 output tile instead of 36 for direct convolution; all transforms are adders. This is a multiplication count, not a measured speedup. <a class="ev" href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/rtl/winograd_3x3_conv.sv" target="_blank" rel="noopener">RTL ↗</a></li>
             <li><b>100,006 vectors, 0 errors</b> in RTL simulation (100,000 random tiles plus corner cases) against a direct-convolution Python reference. <a class="ev" href="https://github.com/cornellev/cnn-accelerator/blob/main/mnist/tb/winograd_3x3_conv_tb.sv" target="_blank" rel="noopener">testbench ↗</a></li>
@@ -521,10 +521,10 @@
               <tr><td>Output, after the exact <code>&gt;&gt;&gt; 2</code></td><td>20-bit signed</td></tr>
             </tbody>
           </table></div>
-          <h4>Other sizing work for the team</h4>
+          <h4>My sizing and architecture work</h4>
           <ul>
             <li>Specified INT8 math with wide accumulators and <b>multiply-and-shift</b> rescaling, so there are no dividers in hardware.</li>
-            <li>Sized the target network: one 3×3 RoadSeg (ResNet-18) layer is about <b>1.1 B multiplies</b> and <b>3.9 MB</b> of memory per frame (hand calculation).</li>
+            <li>Sized the target network: one 3×3 RoadSeg (ResNet-18) layer is about <b>1.1 B multiplies</b> and <b>3.9 MB</b> of memory per frame (my hand calculation).</li>
             <li>Sized the MNIST prototype's block RAM at <b>88.5 kB</b> and drafted the FSM that sequences its conv and pool layers.</li>
           </ul>
           <h4>Reproduce the simulation</h4>
@@ -581,17 +581,16 @@ endmodule</code></pre>
           <h3><a class="anchor" href="#rrc-matched-filter">RRC Matched Filter for a QPSK Receiver</a></h3>
           <ul class="status" aria-label="Implementation status">
             <li class="ok"><b>33-tap, I+Q</b> · RTL simulation passing</li>
-            <li class="ok"><b>21-tap, single channel</b> · Quartus fit on Cyclone IV</li>
-            <li class="no"><b>On-board demo</b> · not yet</li>
+            <li class="ok"><b>21-tap, single channel</b> · fit and ran on a Cyclone IV EP4CE6 board</li>
           </ul>
-          <p>A root-raised-cosine matched filter built from hand-rolled radix-4 Booth multipliers, wrapped in AXI4-Stream with back-pressure, and checked bit-for-bit against a Python model on real modulated data. The full design is verified in simulation; a smaller version was compiled for a low-cost Cyclone IV.</p>
+          <p>A root-raised-cosine matched filter built from hand-rolled radix-4 Booth multipliers, wrapped in AXI4-Stream with back-pressure, and checked bit-for-bit against a Python model on real modulated data. The full design is verified in simulation; a smaller version runs on a low-cost Cyclone IV board.</p>
           <p class="mine"><b>My part</b>Solo project: RTL, the bit-exact Python golden model and stimulus, testbenches, and Quartus build scripts.</p>
           <ul class="proof">
             <li class="grp">Verification · 33-tap dual-channel design, Icarus Verilog</li>
             <li><b>0 mismatches</b> in 16,384 filter outputs vs. the bit-exact golden model, under random stalls and gaps. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/sim/tb_rrc_fir_axis.v" target="_blank" rel="noopener">testbench ↗</a></li>
             <li>Bit error rate within <b>1.10×</b> of theoretical QPSK (54 errors in 8,174 bits at Es/N0 = 8 dB). <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter#results" target="_blank" rel="noopener">results ↗</a></li>
-            <li class="grp">Implementation · 21-tap single-channel version, EP4CE6 Cyclone IV</li>
-            <li>Quartus fit at <b>129 MHz</b> F<sub>max</sub> using <b>74%</b> of logic elements. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/hw_demo/build.tcl" target="_blank" rel="noopener">build script ↗</a></li>
+            <li class="grp">Hardware · 21-tap single-channel version on an EP4CE6 Cyclone IV board</li>
+            <li>Runs on the board; Quartus fit at <b>129 MHz</b> F<sub>max</sub> using <b>74%</b> of logic elements. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/hw_demo/build.tcl" target="_blank" rel="noopener">build script ↗</a></li>
           </ul>
           <div class="chips"><span>Verilog</span><span>Python</span><span>Quartus</span><span>Icarus Verilog</span><span>AXI4-Stream</span></div>
           <div class="links"><a class="repo" href="https://github.com/IshaanParikh/rrc-matched-filter" target="_blank" rel="noopener">IshaanParikh/rrc-matched-filter ↗</a></div>
@@ -756,9 +755,10 @@ always_ff @(posedge clk) begin
           <h3><a class="anchor" href="#can-dashboard-pcb">CAN Dashboard PCB</a></h3>
           <ul class="status" aria-label="Implementation status">
             <li class="ok"><b>Schematic &amp; 4-layer layout</b> · complete, DRC clean</li>
+            <li class="ok"><b>Board</b> · fabricated</li>
           </ul>
           <p>The car's dashboard board: it reads six driver inputs, talks to the rest of the car over CAN FD, and runs straight off the 60 V traction bus. An RP2040 does the thinking, an MCP251863 handles CAN, and a 75 V buck makes the 5 V rail.</p>
-          <p class="mine"><b>My part</b>Designed the board in Altium: schematic, part selection, and the four-layer layout for JLCPCB.</p>
+          <p class="mine"><b>My part</b>Designed the board in Altium: schematic, part selection, and the four-layer layout, fabricated by JLCPCB.</p>
           <ul class="proof">
             <li><b>60 V → 5 V</b> with a RAA211820 synchronous buck (75 V, 2 A), then an LDO to 3.3 V that's diode-OR'd with USB power</li>
             <li>MCP251863 CAN FD controller + transceiver on SPI, with a <b>split 62 Ω</b> termination for the bus</li>
