@@ -14,14 +14,14 @@ with different dimensions.
 | File | What goes there |
 |---|---|
 | `cnn_accelerator.jpg` | FPGA board photo for the CNN accelerator (once it runs on hardware) |
-| `rrc_fpga_board.jpg` | Cyclone IV board running the RRC filter (once demonstrated) |
+| `rrc_fpga_board.jpg` | Photo of the DueProLogic board running the RRC filter |
 | `lowlight_bms.jpg` | Low Light Innovations BMS board render or photo |
 | `cev_can_dashboard.jpg` | Fabricated CEV CAN dashboard PCB |
 
 ## In use
 
-`headshot.jpg`, `rrc_constellation.jpg`, `rrc_eye.jpg` (from the rrc-matched-filter
-repo), `slam_sim_result.svg`, `slam_vis.jpg`, `slam_desk.jpg`, `polymer.jpg`,
+`headshot.jpg`, `rrc_board_constellation.png`, `rrc_board_eye.png`, `rrc_board_taps.png`
+(measured on the FPGA board, copied from the rrc-matched-filter repo's `docs/board_*.png`), `slam_sim_result.svg`, `slam_vis.jpg`, `slam_desk.jpg`, `polymer.jpg`,
 `xray.jpg`, `quantum_focus_curve.png`, `waveguide_alignment_v2.mp4` (+ poster),
 `weld.jpg`, `matter.jpg`, `cev_layout.png`, `cev_sch_*.svg`,
 `cev_dashboard_schematic.pdf`, `cev_dashboard.glb` (3D viewer, loaded on click).

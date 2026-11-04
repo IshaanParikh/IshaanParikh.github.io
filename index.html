@@ -13,7 +13,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Ishaan Parikh" />
   <meta property="og:title" content="Ishaan Parikh · FPGA, DSP &amp; embedded hardware" />
-  <meta property="og:description" content="ECE at Cornell. RTL with testbenches behind every number: a Winograd CNN convolution unit, a bit-exact RRC matched filter, an ITCH feed handler, and a 60 V CAN dashboard PCB." />
+  <meta property="og:description" content="ECE at Cornell. RTL with testbenches behind every number: a Winograd CNN convolution unit, an RRC matched filter running bit-exact on an FPGA board, an ITCH feed handler, and a 60 V CAN dashboard PCB." />
   <meta property="og:url" content="https://ishaanparikh.github.io/" />
   <meta property="og:image" content="https://ishaanparikh.github.io/images/og-card.jpg" />
   <meta property="og:image:width" content="1200" />
@@ -580,36 +580,57 @@ endmodule</code></pre>
           <div class="part"><span class="ref">U2</span>DSP · FPGA · Jul 2026 – now<button class="copy" type="button" data-id="rrc-matched-filter" aria-label="Copy link to RRC Matched Filter">copy link</button></div>
           <h3><a class="anchor" href="#rrc-matched-filter">RRC Matched Filter for a QPSK Receiver</a></h3>
           <ul class="status" aria-label="Implementation status">
-            <li class="ok"><b>33-tap, I+Q</b> · RTL simulation passing</li>
-            <li class="ok"><b>21-tap, single channel</b> · fit and ran on a Cyclone IV EP4CE6 board</li>
+            <li class="ok"><b>21-tap, single channel</b> · running on a Cyclone IV board, bit-exact</li>
+            <li class="ok"><b>33-tap, I+Q, AXI4-Stream</b> · RTL simulation passing</li>
+            <li class="no"><b>33-tap on Cyclone V</b> · not yet synthesized</li>
           </ul>
-          <p>A root-raised-cosine matched filter built from hand-rolled radix-4 Booth multipliers, wrapped in AXI4-Stream with back-pressure, and checked bit-for-bit against a Python model on real modulated data. The full design is verified in simulation; a smaller version runs on a low-cost Cyclone IV board.</p>
-          <p class="mine"><b>My part</b>Solo project: RTL, the bit-exact Python golden model and stimulus, testbenches, and Quartus build scripts.</p>
+          <p>A root-raised-cosine matched filter built from hand-rolled radix-4 Booth multipliers, checked bit-for-bit against a Python model on real modulated data. A 21-tap version runs on an EPT DueProLogic (Cyclone IV EP4CE6): samples stream through the FPGA over USB and every output is checked. The full 33-tap AXI4-Stream design is verified in simulation.</p>
+          <p class="mine"><b>My part</b>Solo project: RTL, the board top level and USB link, an at-speed self-test, the bit-exact Python golden model, testbenches, and the host-side test suite.</p>
           <ul class="proof">
-            <li class="grp">Verification · 33-tap dual-channel design, Icarus Verilog</li>
-            <li><b>0 mismatches</b> in 16,384 filter outputs vs. the bit-exact golden model, under random stalls and gaps. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/sim/tb_rrc_fir_axis.v" target="_blank" rel="noopener">testbench ↗</a></li>
-            <li>Bit error rate within <b>1.10×</b> of theoretical QPSK (54 errors in 8,174 bits at Es/N0 = 8 dB). <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter#results" target="_blank" rel="noopener">results ↗</a></li>
-            <li class="grp">Hardware · 21-tap single-channel version on an EP4CE6 Cyclone IV board</li>
-            <li>Runs on the board; Quartus fit at <b>129 MHz</b> F<sub>max</sub> using <b>74%</b> of logic elements. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/hw_demo/build.tcl" target="_blank" rel="noopener">build script ↗</a></li>
+            <li class="grp">On the board · 21-tap, EP4CE6</li>
+            <li><b>0 mismatches</b> in 16,384 I + 16,384 Q samples streamed through the FPGA, with BER at <b>0.98×</b> theoretical QPSK (48 errors in 8,180 bits at Es/N0 = 8 dB). <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter#results-on-the-board" target="_blank" rel="noopener">board results ↗</a></li>
+            <li>At-speed self-test: <b>100 of 100</b> runs pass, <b>104,857,600</b> outputs CRC-checked against the model at the full 66 MHz clock. <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/docs/PERFORMANCE.md#at-speed-self-test-2026-11-01" target="_blank" rel="noopener">self-test ↗</a></li>
+            <li class="grp">In simulation · 33-tap I+Q, AXI4-Stream</li>
+            <li><b>0 mismatches</b> in 16,384 outputs under random back-pressure (16,412 beats in, 16,412 out). <a class="ev" href="https://github.com/IshaanParikh/rrc-matched-filter#results-in-simulation" target="_blank" rel="noopener">sim results ↗</a></li>
           </ul>
-          <div class="chips"><span>Verilog</span><span>Python</span><span>Quartus</span><span>Icarus Verilog</span><span>AXI4-Stream</span></div>
+          <div class="chips"><span>Verilog</span><span>Python</span><span>Quartus</span><span>Cyclone IV</span><span>Icarus Verilog</span><span>AXI4-Stream</span></div>
           <div class="links"><a class="repo" href="https://github.com/IshaanParikh/rrc-matched-filter" target="_blank" rel="noopener">IshaanParikh/rrc-matched-filter ↗</a></div>
         </div>
         <div class="project-media">
           <figure class="shot contain">
-            <a href="images/rrc_constellation.jpg" target="_blank" rel="noopener"><img src="images/rrc_constellation.jpg" alt="QPSK constellation before and after the RRC filter" width="1125" height="667" loading="lazy" decoding="async" /></a>
-            <figcaption>QPSK at +2 dB SNR: raw samples (left) vs. after the Verilog filter in simulation (right)</figcaption>
+            <a href="images/rrc_board_constellation.png" target="_blank" rel="noopener"><img src="images/rrc_board_constellation.png" alt="QPSK constellation at Es/N0 = 8 dB: input to the board (EVM 72.7%) and the FPGA's output (EVM 40.3%)" width="937" height="530" loading="lazy" decoding="async" /></a>
+            <figcaption>Measured on the FPGA: QPSK at 8 dB going into the board (left) and coming back out (right)</figcaption>
           </figure>
           <figure class="shot contain">
-            <img src="images/rrc_eye.jpg" alt="Eye diagram of the filtered signal" width="973" height="557" loading="lazy" decoding="async" />
-            <figcaption>Eye diagram on a clean channel, simulation: open at the sampling instant (zero ISI)</figcaption>
+            <a href="images/rrc_board_eye.png" target="_blank" rel="noopener"><img src="images/rrc_board_eye.png" alt="Eye diagram of the filter output captured from the board" width="863" height="519" loading="lazy" decoding="async" /></a>
+            <figcaption>Eye diagram of the board's output</figcaption>
           </figure>
         </div>
       </div>
       <details class="more">
-        <summary><span><b>Details</b> · more results, the scaled-down build, waveform</span></summary>
+        <summary><span><b>Details</b> · board numbers, test suite, simulation, waveform</span></summary>
         <div class="more-body">
-          <h4>All verification results (33-tap, simulation)</h4>
+          <h4>Board results (21-tap, EPT DueProLogic, EP4CE6)</h4>
+          <div class="tbl"><table>
+            <thead><tr><th>Check</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Board output vs. golden model</td><td>0 mismatches in 16,384 I + 16,384 Q samples</td></tr>
+              <tr><td>Link performance</td><td>BER 0.98× theory (48 errors in 8,180 bits at 8 dB); +5.12 dB matched-filter gain</td></tr>
+              <tr><td>At-speed self-test</td><td>100/100 runs, 2<sup>20</sup> back-to-back samples each at 66 MHz, CRC-32 matches the model every time</td></tr>
+              <tr><td>Board test suite</td><td>9 stimulus sets (QPSK at 0–12 dB, rails, impulses, steps, random, repeat), 45,935 samples, 0 mismatches</td></tr>
+              <tr><td>Resources</td><td>5,439 / 6,272 logic elements (87%), no DSP blocks</td></tr>
+              <tr><td>Timing</td><td>F<sub>max</sub> 156.5 MHz against the board's 66 MHz clock</td></tr>
+              <tr><td>Throughput over USB</td><td>about 990 samples/s; the lockstep UART link is the limit, not the filter</td></tr>
+            </tbody>
+          </table></div>
+          <p>The full 33-tap I+Q design needs about 14,000 logic cells, more than the EP4CE6's 6,272, so the board runs one 21-tap channel of the same verified core, and I and Q go through as two runs. Hard DSP blocks are disabled so the Booth multipliers are what get measured.</p>
+          <div class="figs">
+            <figure class="shot contain">
+              <a href="images/rrc_board_taps.png" target="_blank" rel="noopener"><img src="images/rrc_board_taps.png" alt="The 21 RRC filter taps used on the board" width="856" height="426" loading="lazy" decoding="async" /></a>
+              <figcaption>The 21 RRC taps in the board build</figcaption>
+            </figure>
+          </div>
+          <h4>Simulation results (33-tap I+Q, AXI4-Stream, Icarus Verilog)</h4>
           <div class="tbl"><table>
             <thead><tr><th>Check</th><th>Result</th></tr></thead>
             <tbody>
@@ -617,16 +638,11 @@ endmodule</code></pre>
               <tr><td>Booth multiplier vs. Verilog <code>*</code></td><td>0 errors in 81,986 comparisons</td></tr>
               <tr><td>Back-pressure</td><td>16,412 beats in, 16,412 out (no drops, no duplicates)</td></tr>
               <tr><td>Pipeline latency</td><td>12 cycles, measured, matches the parameter</td></tr>
-              <tr><td>Saturation coverage</td><td>237 saturating outputs, all bit-exact</td></tr>
+              <tr><td>Regression matrix</td><td>46 of 46 runs pass (taps × Es/N0 × seeds × patterns), 330,979 beats, all bit-exact</td></tr>
               <tr><td>Link performance</td><td>BER 1.10× theory; +5.19 dB matched-filter gain</td></tr>
-              <tr><td>Zero-ISI</td><td>eye open at the sampling instant on a clean channel</td></tr>
             </tbody>
           </table></div>
-          <p>Everything above comes from one regression script: <code>./sim/run_sim.sh</code> (Python with numpy/scipy/matplotlib, Icarus Verilog 12). It regenerates the stimulus from a fixed seed, so the numbers reproduce exactly.</p>
-          <h4>Why the hardware build is smaller</h4>
-          <p>The full 33-tap I+Q design needs about 14,000 logic cells, more than the EP4CE6's 6,272. The <a href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/hw_demo/top_single_channel.v" target="_blank" rel="noopener">hw_demo top level</a> wraps one <code>rrc_fir_core</code> with 21 taps and no AXI wrapper. It reuses the verified core, but it is a different filter, so the 129 MHz and 74% numbers apply to it and not to the 33-tap design. Hard DSP blocks are disabled so the Booth multipliers are what get measured.</p>
-          <pre class="cmd">quartus_sh  -t hw_demo/build.tcl
-quartus_sta -t hw_demo/report_timing.tcl   # Fmax + critical path</pre>
+          <p>Reproduce with <code>./sim/run_sim.sh</code> and <code>python sim/run_regress.py</code>; the board runs use <code>python/board_suite.py</code> and <code>python/dpl_bist.py</code>. Full sweeps are in <a href="https://github.com/IshaanParikh/rrc-matched-filter/blob/main/docs/PERFORMANCE.md" target="_blank" rel="noopener">PERFORMANCE.md</a>.</p>
           <figure class="wave">
             <a class="scroll" href="images/rrc_waveform.png" target="_blank" rel="noopener"><img src="images/rrc_waveform.png" alt="RRC filter AXI4-Stream simulation waveform" width="2080" height="697" loading="lazy" decoding="async" /></a>
             <figcaption><b>RTL simulation waveform</b> · 30 cycles of random stalls and gaps: the delay line only moves on real samples, the output still drains on every ready (click to enlarge)</figcaption>
