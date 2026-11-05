@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 640" width="560" height="640" role="img" aria-labelledby="t d">
+<title id="t">Two-stage SIIM-COVID19 inference pipeline</title>
+<desc id="d">Each DICOM is windowed and resized. YOLOv5 predicts opacity boxes per image, which are scaled back to the original resolution. A CNN ensemble predicts one of four study classes, averaged across models and across the images in a study. Both go into submission.csv.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5c6068"/></marker></defs>
+<rect width="560" height="640" fill="#f8f6f0"/>
+<rect x="20" y="20" width="250" height="110" rx="8" fill="#ffffff" stroke="#d8d2c4" stroke-width="1.5"/>
+<text x="34" y="42" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#5c6068">INPUT</text>
+<text x="34" y="64" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" fill="#1c1d20">One test study</text>
+<text x="34" y="87" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">.dcm files, 1–n images</text>
+<text x="34" y="106" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">grouped by study_id</text>
+<rect x="290" y="20" width="250" height="148" rx="8" fill="#ffffff" stroke="#d8d2c4" stroke-width="1.5"/>
+<text x="304" y="42" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#5c6068">PREPROCESS · read_xray()</text>
+<text x="304" y="64" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" fill="#1c1d20">Window, invert, resize</text>
+<text x="304" y="87" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">VOI LUT windowing</text>
+<text x="304" y="106" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">MONOCHROME1 → invert</text>
+<text x="304" y="125" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">min-max → uint8</text>
+<text x="304" y="144" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">Lanczos → 512×512 PNG</text>
+<path d="M270,75 L288,75" fill="none" stroke="#5c6068" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M415.0,168 L415.0,188 L145.0,188 L145.0,222" fill="none" stroke="#5c6068" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M415.0,188 L415.0,222" fill="none" stroke="#5c6068" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="20" y="212" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#b8441f">IMAGE LEVEL</text>
+<text x="290" y="212" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#2563a8">STUDY LEVEL</text>
+<rect x="20" y="224" width="250" height="128" rx="8" fill="#fdebe4" stroke="#e0532b" stroke-width="1.5"/>
+<text x="34" y="246" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#b8441f">STAGE 1</text>
+<text x="34" y="268" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" fill="#1c1d20">YOLOv5s detector</text>
+<text x="34" y="291" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">input 256 px</text>
+<text x="34" y="310" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">conf ≥ 0.2, NMS IoU 0.5</text>
+<text x="34" y="329" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">≤ 10 boxes per image</text>
+<rect x="290" y="224" width="250" height="128" rx="8" fill="#e7eff9" stroke="#2563a8" stroke-width="1.5"/>
+<text x="304" y="246" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#2563a8">STAGE 2</text>
+<text x="304" y="268" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" fill="#1c1d20">CNN ensemble, 224 px</text>
+<text x="304" y="291" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">softmax over 4 classes:</text>
+<text x="304" y="310" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">negative · typical ·</text>
+<text x="304" y="329" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">indeterminate · atypical</text>
+<path d="M145.0,352 L145.0,378" fill="none" stroke="#5c6068" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M415.0,352 L415.0,378" fill="none" stroke="#5c6068" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="20" y="380" width="250" height="110" rx="8" fill="#ffffff" stroke="#e0532b" stroke-width="1.5"/>
+<text x="34" y="402" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#b8441f">POST-PROCESS</text>
+<text x="34" y="424" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" fill="#1c1d20">Boxes → DICOM pixels</text>
+<text x="34" y="447" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">xc,yc,w,h → corners</text>
+<text x="34" y="466" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">rescale 512 px → H×W</text>
+<rect x="290" y="380" width="250" height="110" rx="8" fill="#ffffff" stroke="#2563a8" stroke-width="1.5"/>
+<text x="304" y="402" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#2563a8">AGGREGATE</text>
+<text x="304" y="424" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" fill="#1c1d20">Mean, then mean</text>
+<text x="304" y="447" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">across all models,</text>
+<text x="304" y="466" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">then all images in study</text>
+<path d="M145.0,490 L145.0,516" fill="none" stroke="#5c6068" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M415.0,490 L415.0,516" fill="none" stroke="#5c6068" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="20" y="518" width="520" height="102" rx="8" fill="#e6f3eb" stroke="#2f8a57" stroke-width="1.5"/>
+<text x="34" y="540" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="0.8" fill="#2f8a57">OUTPUT</text>
+<text x="34" y="562" font-family="IBM Plex Sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif" font-size="15" font-weight="600" fill="#1c1d20">submission.csv</text>
+<text x="34" y="585" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">&lt;image_id&gt;_image  opacity conf xmin ymin xmax ymax …</text>
+<text x="34" y="604" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5c6068">&lt;study_id&gt;_study  negative p 0 0 1 1  typical p …</text>
+</svg>

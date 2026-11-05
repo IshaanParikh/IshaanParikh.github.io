@@ -22,7 +22,7 @@ with different dimensions.
 
 `headshot.jpg`, `rrc_board_constellation.png`, `rrc_board_eye.png`, `rrc_board_taps.png`
 (measured on the FPGA board, copied from the rrc-matched-filter repo's `docs/board_*.png`), `slam_sim_result.svg`, `slam_vis.jpg`, `slam_desk.jpg`, `polymer.jpg`,
-`xray.jpg`, `quantum_focus_curve.png`, `waveguide_alignment_v2.mp4` (+ poster),
+`xray.jpg`, `xray_pipeline.svg`, `quantum_focus_curve.png`, `waveguide_alignment_v2.mp4` (+ poster),
 `weld.jpg`, `matter.jpg`, `cev_layout.png`, `cev_sch_*.svg`,
 `cev_dashboard_schematic.pdf`, `cev_dashboard.glb` (3D viewer, loaded on click).
 
