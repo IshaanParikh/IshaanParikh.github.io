@@ -313,7 +313,10 @@
     .compact .project-media { border-left: 1px solid var(--line); }
     .compact .shot { min-height: 0; }
     .compact .shot img { aspect-ratio: 1; }
-    .compact details.code > summary { padding: 10px 22px; }
+    .compact details.code > summary, .compact details.more > summary { padding: 10px 22px; }
+    .compact .more-body { padding: 6px 22px 20px; }
+    .compact .more-body .figs { margin: 14px -22px 0; grid-template-columns: 1fr; }
+    .compact .more-body .figs .shot img { aspect-ratio: auto; }
     .compact pre > code, .compact pre code.hljs { padding: 14px 22px; }
 
     /* ── EXPERIENCE ── */
@@ -985,15 +988,42 @@ class GNNRegressor(nn.Module):
             <ul class="proof">
               <li>DICOM decoding with <b>VOI LUT</b> windowing and MONOCHROME1 inversion so every scan reads the same way</li>
               <li>Averaged predictions across ensemble members and every image in a study</li>
+              <li>Two outputs per study: opacity boxes rescaled to the <b>original DICOM</b> resolution, and a <b>4-class</b> label (negative, typical, indeterminate, atypical)</li>
             </ul>
             <div class="links"><a href="https://github.com/IshaanParikh/Xray-pneumonia-detection" target="_blank" rel="noopener">IshaanParikh/Xray-pneumonia-detection ↗</a></div>
           </div>
           <div class="project-media">
             <figure class="shot contain">
-              <img src="images/xray.jpg" alt="Chest X-ray with predicted (red) and ground-truth (green) opacity boxes" width="434" height="434" loading="lazy" decoding="async" />
+              <a href="images/xray.jpg" target="_blank" rel="noopener"><img src="images/xray.jpg" alt="Chest X-ray with predicted (red) and ground-truth (green) opacity boxes" width="434" height="434" loading="lazy" decoding="async" /></a>
             </figure>
           </div>
         </div>
+        <details class="more">
+          <summary><span><b>Details</b> · pipeline and outputs</span></summary>
+          <div class="more-body">
+            <div class="figs">
+              <figure class="shot contain">
+                <a href="images/xray.jpg" target="_blank" rel="noopener"><img src="images/xray.jpg" alt="Chest X-ray with predicted (red) and ground-truth (green) opacity boxes" width="434" height="434" loading="lazy" decoding="async" /></a>
+                <figcaption>Image-level output: predicted opacity boxes (red) against ground truth (green)</figcaption>
+              </figure>
+            </div>
+            <h4>Pipeline</h4>
+            <div class="figs">
+              <figure class="shot contain">
+                <a href="images/xray_pipeline.svg" target="_blank" rel="noopener"><img src="images/xray_pipeline.svg" alt="Pipeline: each DICOM is windowed and resized; YOLOv5 predicts opacity boxes that are scaled back to the original resolution; a CNN ensemble predicts one of four study classes, averaged over models and images; both go into submission.csv" width="560" height="640" loading="lazy" decoding="async" /></a>
+              </figure>
+            </div>
+            <h4>What the notebook writes</h4>
+            <div class="tbl"><table>
+              <thead><tr><th>Row</th><th>PredictionString</th></tr></thead>
+              <tbody>
+                <tr><td><code>&lt;image_id&gt;_image</code></td><td><code>opacity conf xmin ymin xmax ymax</code>, repeated for each box (up to 10), in original DICOM pixels; <code>none 1 0 0 1 1</code> when YOLOv5 finds nothing</td></tr>
+                <tr><td><code>&lt;study_id&gt;_study</code></td><td><code>negative p 0 0 1 1 typical p 0 0 1 1 indeterminate p 0 0 1 1 atypical p 0 0 1 1</code>, where each <code>p</code> is the ensemble's mean probability for that class</td></tr>
+              </tbody>
+            </table></div>
+            <p>A study can hold several images (different views of the same patient), so the study-level probabilities are averaged across every image in it as well as across every model.</p>
+          </div>
+        </details>
         <details class="code">
           <summary><span class="file">&lt;/&gt; <b>submission-ishaan.ipynb</b></span></summary>
           <pre><code class="language-python"># YOLOv5 returns x_center, y_center, width, height; Kaggle wants corners
